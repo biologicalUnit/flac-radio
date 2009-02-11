@@ -1,4 +1,8 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import javax.media.*;
 import apps.Decoder;
 
@@ -13,6 +17,7 @@ public class FlacPlayer{
 		int min = (int)time/60;
 		int sec = (int)time % 60;
 		System.out.println("Time: "+min+":"+sec);
+		p.getLyrics("The Arcade Fire", "Neon Bible");
 	}
 	//Constructor takes the name to save decoded track as in the form of a string ex:"track1.wav"
 	public FlacPlayer(String trackName){
@@ -49,6 +54,21 @@ public class FlacPlayer{
 	//returns the length of the track in the form of seconds
 	public double getTime(){
 		return player.getDuration().getSeconds();
+	}
+	public void getLyrics(String artist, String title){
+		try{
+			URL lyricURL = new URL("http://lyricwiki.org/api.php?func=getSong&artist="+artist.replace(" ","_")+"&song="+title.replace(" ","_")+"&fmt=text");
+			lyricURL.openConnection();
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(
+							lyricURL.openStream()));
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null)
+				System.out.println(inputLine);
+
+			in.close();
+		}catch(Exception e){}
 	}
 
 }
