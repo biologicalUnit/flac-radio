@@ -23,9 +23,13 @@ public class FlacRadioGUI extends JFrame{
 	private JTextArea player1;
 	private JTextArea player2;
 	private JList artistDatabase;
+	private JList albumDatabase;
 	private JList titleDatabase;
+
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
+	private DefaultListModel albumModel;
+
 	private JPanel panel;
 	private boolean paused1;
 	private boolean paused2;
@@ -47,20 +51,22 @@ public class FlacRadioGUI extends JFrame{
 		player2.setDragEnabled(true);
 
 		artistModel = new DefaultListModel();
+		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
 
 		artistDatabase = new JList(artistModel);
 		getAllArtists();
+		albumDatabase = new JList(albumModel);
 		titleDatabase = new JList(titleModel);
-		//getAllTitles();
 
-		artistDatabase.setDragEnabled(true);
 		titleDatabase.setDragEnabled(true);
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
+		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
 		JScrollPane titleScrollPane = new JScrollPane(titleDatabase);
 
 		playPause1 = new JButton("Play");
@@ -106,7 +112,11 @@ public class FlacRadioGUI extends JFrame{
 		artistScrollPane.setSize(200,275);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
 
-		titleScrollPane.setLocation(210,275);
+		albumScrollPane.setLocation(210,275);
+		albumScrollPane.setSize(200,275);
+		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
+
+		titleScrollPane.setLocation(410,275);
 		titleScrollPane.setSize(200,275);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
 
@@ -114,6 +124,13 @@ public class FlacRadioGUI extends JFrame{
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
 				getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
+				getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
+			}
+
+		});
+		albumDatabase.addListSelectionListener(new ListSelectionListener(){
+			public void valueChanged(ListSelectionEvent arg0) {
+				getTitlesFromAlbumArtist(artistDatabase.getSelectedValue().toString(),albumDatabase.getSelectedValue().toString());
 			}
 
 		});
@@ -158,6 +175,7 @@ public class FlacRadioGUI extends JFrame{
 		panel.add(player2);
 		panel.add(artistScrollPane);
 		panel.add(titleScrollPane);
+		panel.add(albumScrollPane);
 		panel.add(playPause1);
 		panel.add(back1);
 		panel.add(loadEject1);
@@ -165,6 +183,7 @@ public class FlacRadioGUI extends JFrame{
 		panel.add(back2);
 		panel.add(loadEject2);
 		panel.setLayout(null);
+		artistDatabase.setSelectedIndex(0);
 
 	}
 	public void play1(){
@@ -182,6 +201,7 @@ public class FlacRadioGUI extends JFrame{
 	}
 	public void play2(){
 		if(paused2){
+			System.out.println(flacPlayer2.getLyrics(artistDatabase.getSelectedValue().toString(),titleDatabase.getSelectedValue().toString()));
 			flacPlayer2.play();
 			playPause2.setText("Pause");
 			paused2=false;
@@ -214,26 +234,26 @@ public class FlacRadioGUI extends JFrame{
 			Connection connect = null;
 			ResultSet resultSet = null;
 			if(artistDatabase.getSelectedIndex() >=0 && titleDatabase.getSelectedIndex()>=0){
-			try {
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
-						+ "user=root&password=");
-				PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+artistDatabase.getSelectedValue().toString()+"\"and title=\""+titleDatabase.getSelectedValue().toString()+"\"");
-				resultSet = statement.executeQuery();
-				String path = null;
-				while(resultSet.next()){
-					path = resultSet.getString("path");
-				}
-				paused1=true;
-				flacPlayer1.load(path);
-				hasTrack1 = true;
-				player1.setText(artistDatabase.getSelectedValue().toString()+" - "+titleDatabase.getSelectedValue().toString());
-				loadEject1.setText("Eject");
-				back1.setEnabled(true);
-				playPause1.setEnabled(true);
-				statement.close();
-				connect.close();
-			}catch(Exception ex){ex.printStackTrace();}
+				try {
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
+							+ "user=root&password=");
+					PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+artistDatabase.getSelectedValue().toString()+"\"and title=\""+titleDatabase.getSelectedValue().toString()+"\"");
+					resultSet = statement.executeQuery();
+					String path = null;
+					while(resultSet.next()){
+						path = resultSet.getString("path");
+					}
+					paused1=true;
+					flacPlayer1.load(path);
+					hasTrack1 = true;
+					player1.setText(artistDatabase.getSelectedValue().toString()+" - "+titleDatabase.getSelectedValue().toString());
+					loadEject1.setText("Eject");
+					back1.setEnabled(true);
+					playPause1.setEnabled(true);
+					statement.close();
+					connect.close();
+				}catch(Exception ex){ex.printStackTrace();}
 			}else{
 				player1.setText("Please Select a Track to Load");
 			}
@@ -326,13 +346,59 @@ public class FlacRadioGUI extends JFrame{
 		Connection connect = null;
 		ResultSet resultSet = null;
 		try {
-
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
 			.getConnection("jdbc:mysql://localhost/music?"
 					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\"");
 
+			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\"");
+			resultSet = statement.executeQuery();
+
+			titleModel.removeAllElements();
+			int i=0;
+			while(resultSet.next()){
+				titleModel.addElement(resultSet.getString("title"));
+				i++;
+			}
+			statement.close();
+			connect.close();
+		}catch(Exception ex){ex.printStackTrace();}
+
+	}
+	public void getAlbumsFromArtist(String artist){
+		Connection connect = null;
+		ResultSet resultSet = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connect = DriverManager
+			.getConnection("jdbc:mysql://localhost/music?"
+					+ "user=root&password=");
+
+			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from MUSIC WHERE artist=\""+artist+"\"");
+			resultSet = statement.executeQuery();
+
+			albumModel.removeAllElements();
+			albumModel.addElement("All Albums");
+			int i=0;
+			while(resultSet.next()){
+				albumModel.addElement(resultSet.getString("album"));
+				i++;
+			}
+			statement.close();
+			connect.close();
+		}catch(Exception ex){ex.printStackTrace();}
+
+	}
+	public void getTitlesFromAlbumArtist(String artist, String album){
+		Connection connect = null;
+		ResultSet resultSet = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connect = DriverManager
+			.getConnection("jdbc:mysql://localhost/music?"
+					+ "user=root&password=");
+
+			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\" and album=\""+album+"\"");
 			resultSet = statement.executeQuery();
 
 			titleModel.removeAllElements();
