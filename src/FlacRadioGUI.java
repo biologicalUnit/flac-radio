@@ -103,11 +103,11 @@ public class FlacRadioGUI extends JFrame{
 		player2.setBorder(BorderFactory.createTitledBorder("Player 2"));
 
 		artistScrollPane.setLocation(10,275);
-		artistScrollPane.setSize(250,275);
+		artistScrollPane.setSize(200,275);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
 
-		titleScrollPane.setLocation(260,275);
-		titleScrollPane.setSize(250,275);
+		titleScrollPane.setLocation(210,275);
+		titleScrollPane.setSize(200,275);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
 
 		panel = new JPanel();
@@ -130,11 +130,15 @@ public class FlacRadioGUI extends JFrame{
 		back1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				rewind1();
+				paused1 = true;
+				playPause1.setText("Play");
 			}
 		});
 		back2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				rewind2();
+				paused2 = true;
+				playPause2.setText("Play");
 			}
 		});
 		loadEject1.addActionListener(new ActionListener() {
@@ -149,7 +153,7 @@ public class FlacRadioGUI extends JFrame{
 		});
 
 		getContentPane().add(panel);
-
+		panel.setBackground(Color.white);
 		panel.add(player1);
 		panel.add(player2);
 		panel.add(artistScrollPane);
@@ -286,7 +290,7 @@ public class FlacRadioGUI extends JFrame{
 			connect = DriverManager
 			.getConnection("jdbc:mysql://localhost/music?"
 					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from MUSIC");
+			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from MUSIC ORDER BY artist");
 
 			resultSet = statement.executeQuery();
 			while(resultSet.next()){
