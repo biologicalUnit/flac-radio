@@ -1,4 +1,6 @@
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,9 +13,7 @@ public class MetaTest {
 	public static void main(String[] args){
 		String path = "/Users/markryan/Documents/TestDB";
 		File dir = new File(path);
-		
 		Connection connect = null;
-		
 		String[] list = dir.list();
 		String output = "";
 
@@ -31,15 +31,15 @@ public class MetaTest {
 					PreparedStatement statement1 = connect.prepareStatement("SELECT path FROM music WHERE path='"+path+"/"+list[i].toString()+"'");
 					ResultSet result = statement1.executeQuery();
 					if(!result.first()){
-						PreparedStatement statement = connect.prepareStatement("INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+path+"/"+list[i].toString()+"\")");
+						PreparedStatement statement = connect.prepareStatement("INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+tag.getFirstAlbum()+"\", \""+path+"/"+list[i].toString()+"\")");
 						statement.execute();
 					}
-
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();}
 			}
 		}
+
 		System.out.println(output);
 	}
 }
