@@ -123,14 +123,22 @@ public class FlacRadioGUI extends JFrame{
 		panel = new JPanel();
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
-				getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
-				getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
+				if(artistDatabase.getSelectedIndex()>=0){
+					getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
+					getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
+				}
 			}
 
 		});
 		albumDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
-				getTitlesFromAlbumArtist(artistDatabase.getSelectedValue().toString(),albumDatabase.getSelectedValue().toString());
+				if(albumDatabase.getSelectedIndex()>=0){
+					if (albumDatabase.getSelectedValue().toString().contains("All")){
+						getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
+					}else{
+						getTitlesFromAlbumArtist(artistDatabase.getSelectedValue().toString(),albumDatabase.getSelectedValue().toString());
+					}
+				}
 			}
 
 		});
