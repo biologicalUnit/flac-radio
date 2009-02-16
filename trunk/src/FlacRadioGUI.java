@@ -11,419 +11,157 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class FlacRadioGUI extends JFrame{
-	private FlacPlayer flacPlayer1;
-	private FlacPlayer flacPlayer2;
-	private JButton playPause1;
-	private JButton playPause2;
-	private JButton loadEject1;
-	private JButton loadEject2;
-	private JButton back1;
-	private JButton back2;
-	private JTextArea player1;
-	private JTextArea player2;
-	private JList artistDatabase;
-	private JList albumDatabase;
-	private JList titleDatabase;
-
-	private DefaultListModel artistModel;
-	private DefaultListModel titleModel;
-	private DefaultListModel albumModel;
-
+public class FlacRadioGUI extends JFrame implements Runnable{
+	private final String trackName = System.currentTimeMillis()+".wav";
+	private FlacPlayer flacPlayer;
+	private FlacRadioDb db;
+	private JButton playPause;
+	private JButton loadEject;
+	private JButton back;
+	private JTextArea player;
 	private JPanel panel;
-	private boolean paused1;
-	private boolean paused2;
-	private boolean hasTrack1;
-	private boolean hasTrack2;
+	private boolean paused;
+	private boolean hasTrack;
+	private JTextArea lyrics;
 
-	public FlacRadioGUI(){
-		flacPlayer1 = new FlacPlayer("track1.wav");
-		flacPlayer2 = new FlacPlayer("track2.wav");
+	public FlacRadioGUI(FlacRadioDb data){
 
-		setSize(800,600);
+		db = data;
+		db.setVisible(true);
+		flacPlayer = new FlacPlayer(trackName);
+
+		setSize(310,650);
 		setVisible(true);
 
-		player1 = new JTextArea("No Track Loaded");
-		player2 = new JTextArea("No Track Loaded");
-		player1.setEditable(false);
-		player2.setEditable(false);
-		player1.setDragEnabled(true);
-		player2.setDragEnabled(true);
+		player = new JTextArea("No Track Loaded");
+		player.setEditable(false);
+		player.setDragEnabled(true);
+		
+		lyrics = new JTextArea("No Lyrics to Display");
+		lyrics.setEditable(false);
+		JScrollPane lyricsScrollPane = new JScrollPane(lyrics);
 
-		artistModel = new DefaultListModel();
-		albumModel = new DefaultListModel();
-		titleModel = new DefaultListModel();
-
-		artistDatabase = new JList(artistModel);
-		getAllArtists();
-		albumDatabase = new JList(albumModel);
-		titleDatabase = new JList(titleModel);
-
-		titleDatabase.setDragEnabled(true);
-
-		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
-		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
-		JScrollPane titleScrollPane = new JScrollPane(titleDatabase);
-
-		playPause1 = new JButton("Play");
-		paused1=true;
-		hasTrack1=false;
-		back1 = new JButton("|<-");
-		loadEject1 = new JButton("Load");
-		playPause1.setEnabled(false);
-		back1.setEnabled(false);
+		playPause = new JButton("Play");
+		paused=true;
+		hasTrack=false;
+		back = new JButton("|<-");
+		loadEject = new JButton("Load");
+		playPause.setEnabled(false);
+		back.setEnabled(false);
 
 		//placement and size for first set
-		playPause1.setSize(95,25);
-		playPause1.setLocation(10,215);
-		back1.setSize(94,25);
-		back1.setLocation(113,215);
-		loadEject1.setSize(95,25);
-		loadEject1.setLocation(215,215);
+		playPause.setSize(95,25);
+		playPause.setLocation(10,115);
+		back.setSize(94,25);
+		back.setLocation(113,115);
+		loadEject.setSize(95,25);
+		loadEject.setLocation(215,115);
 
-		playPause2 = new JButton("Play");
-		paused2=true;
-		hasTrack2=false;
-		back2 = new JButton("|<-");
-		loadEject2 = new JButton("Load");
-		playPause2.setEnabled(false);
-		back2.setEnabled(false);
-
-		// placement and size for second set
-		playPause2.setSize(95,25);
-		playPause2.setLocation(360,215);
-		back2.setSize(94,25);
-		back2.setLocation(463,215);
-		loadEject2.setSize(95,25);
-		loadEject2.setLocation(565,215);
-
-		player1.setLocation(10, 10);
-		player2.setLocation(360,10);
-		player1.setSize(300,200);
-		player2.setSize(300,200);
-		player1.setBorder(BorderFactory.createTitledBorder("Player 1"));
-		player2.setBorder(BorderFactory.createTitledBorder("Player 2"));
-
-		artistScrollPane.setLocation(10,275);
-		artistScrollPane.setSize(200,275);
-		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
-
-		albumScrollPane.setLocation(210,275);
-		albumScrollPane.setSize(200,275);
-		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
-
-		titleScrollPane.setLocation(410,275);
-		titleScrollPane.setSize(200,275);
-		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
-
+		player.setLocation(10, 10);
+		player.setSize(200,100);
+		player.setBorder(BorderFactory.createTitledBorder("Player 1"));
+		
+		lyricsScrollPane.setLocation(10,200);
+		lyricsScrollPane.setSize(300,300);
+		
 		panel = new JPanel();
-		artistDatabase.addListSelectionListener(new ListSelectionListener(){
-			public void valueChanged(ListSelectionEvent arg0) {
-				if(artistDatabase.getSelectedIndex()>=0){
-					getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
-					getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
-				}
-			}
 
-		});
-		albumDatabase.addListSelectionListener(new ListSelectionListener(){
-			public void valueChanged(ListSelectionEvent arg0) {
-				if(albumDatabase.getSelectedIndex()>=0){
-					if (albumDatabase.getSelectedValue().toString().contains("All")){
-						getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
-					}else{
-						getTitlesFromAlbumArtist(artistDatabase.getSelectedValue().toString(),albumDatabase.getSelectedValue().toString());
-					}
-				}
-			}
-
-		});
-		playPause1.addActionListener(new ActionListener() {
+		playPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				play1();
+				play();
 			}
 		});
-		playPause2.addActionListener(new ActionListener() {
+		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				play2();
+				rewind();
+				paused = true;
+				playPause.setText("Play");
 			}
 		});
-		back1.addActionListener(new ActionListener() {
+		loadEject.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				rewind1();
-				paused1 = true;
-				playPause1.setText("Play");
-			}
-		});
-		back2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				rewind2();
-				paused2 = true;
-				playPause2.setText("Play");
-			}
-		});
-		loadEject1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				loadEject1();
-			}
-		});
-		loadEject2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				loadEject2();
+				ejectLoad();
 			}
 		});
 
 		getContentPane().add(panel);
 		panel.setBackground(Color.white);
-		panel.add(player1);
-		panel.add(player2);
-		panel.add(artistScrollPane);
-		panel.add(titleScrollPane);
-		panel.add(albumScrollPane);
-		panel.add(playPause1);
-		panel.add(back1);
-		panel.add(loadEject1);
-		panel.add(playPause2);
-		panel.add(back2);
-		panel.add(loadEject2);
+		panel.add(player);
+		panel.add(playPause);
+		panel.add(back);
+		panel.add(loadEject);
+		panel.add(lyricsScrollPane);
 		panel.setLayout(null);
-		artistDatabase.setSelectedIndex(0);
+		panel.setVisible(true);
 
 	}
-	public void play1(){
-		if(paused1){
-			flacPlayer1.play();
-			paused1 = false;
-			playPause1.setText("Pause");
+	public void play(){
+		if(paused){
+			flacPlayer.play();
+			paused = false;
+			playPause.setText("Pause");
 
 		}else{
-			flacPlayer1.pause();
-			paused1 = true;
-			playPause1.setText("Play");
+			flacPlayer.pause();
+			paused = true;
+			playPause.setText("Play");
 
 		}
 	}
-	public void play2(){
-		if(paused2){
-			System.out.println(flacPlayer2.getLyrics(artistDatabase.getSelectedValue().toString(),titleDatabase.getSelectedValue().toString()));
-			flacPlayer2.play();
-			playPause2.setText("Pause");
-			paused2=false;
+
+	public void rewind(){
+		flacPlayer.rewind();
+	}
+	public void ejectLoad(){
+		if(hasTrack){
+			if(!paused){
+				flacPlayer.pause();
+				playPause.setText("Play");
+			}
+			paused=true;
+			flacPlayer.pause();
+			playPause.setEnabled(false);
+			loadEject.setText("Load");
+			back.setEnabled(false);
+			hasTrack = false;
+			player.setText("No Track Loaded");
 		}else{
-			flacPlayer2.pause();
-			playPause2.setText("Play");
-			paused2=true;
+			db.makeThread(this);
 		}
 	}
-	public void rewind1(){
-		flacPlayer1.rewind();
-	}
-	public void rewind2(){
-		flacPlayer2.rewind();
-	}
-	public void loadEject1(){
-		if(hasTrack1){
-			if(!paused1){
-				flacPlayer1.pause();
-			}
-			paused1=true;
-			flacPlayer1.pause();
-			playPause1.setEnabled(false);
-			loadEject1.setText("Load");
-			back1.setEnabled(false);
-			hasTrack1 = false;
-			player1.setText("No Track Loaded");
+
+	public void run(){
+		player.setText(db.getArtist()+" \n "+db.getTitle());
+		lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
+		Connection connect = null;
+		ResultSet resultSet = null;
+		if(db.getArtist() != null && db.getTitle() != null){
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
+						+ "user=root&password=");
+				PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+db.getArtist()+"\"and title=\""+db.getTitle()+"\"");
+				resultSet = statement.executeQuery();
+				String path = null;
+				while(resultSet.next()){
+					path = resultSet.getString("path");
+				}
+				paused=true;
+				flacPlayer.load(path);
+				hasTrack = true;
+
+				loadEject.setText("Eject");
+				back.setEnabled(true);
+				playPause.setEnabled(true);
+				statement.close();
+				connect.close();
+			}catch(Exception ex){ex.printStackTrace();}
+		}else{
+			player.setText("Please Select a Track to Load");
 		}
-		else{
-			Connection connect = null;
-			ResultSet resultSet = null;
-			if(artistDatabase.getSelectedIndex() >=0 && titleDatabase.getSelectedIndex()>=0){
-				try {
-					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
-							+ "user=root&password=");
-					PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+artistDatabase.getSelectedValue().toString()+"\"and title=\""+titleDatabase.getSelectedValue().toString()+"\"");
-					resultSet = statement.executeQuery();
-					String path = null;
-					while(resultSet.next()){
-						path = resultSet.getString("path");
-					}
-					paused1=true;
-					flacPlayer1.load(path);
-					hasTrack1 = true;
-					player1.setText(artistDatabase.getSelectedValue().toString()+" - "+titleDatabase.getSelectedValue().toString());
-					loadEject1.setText("Eject");
-					back1.setEnabled(true);
-					playPause1.setEnabled(true);
-					statement.close();
-					connect.close();
-				}catch(Exception ex){ex.printStackTrace();}
-			}else{
-				player1.setText("Please Select a Track to Load");
-			}
-		}
-	}
-	public void loadEject2(){
-		if(hasTrack2){
-			if(!paused2){
-				flacPlayer2.pause();
-			}
-			paused2=true;
-			playPause2.setEnabled(false);
-			loadEject2.setText("Load");
-			back2.setEnabled(false);
-			hasTrack2 = false;
-			player2.setText("No Track Loaded");
-		}
-		else{
-			Connection connect = null;
-			ResultSet resultSet = null;
-			if(artistDatabase.getSelectedIndex() >=0 && titleDatabase.getSelectedIndex()>=0){
-				try {
-					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
-							+ "user=root&password=");
-					PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+artistDatabase.getSelectedValue().toString()+"\"and title=\""+titleDatabase.getSelectedValue().toString()+"\"");
-					System.out.println(artistDatabase.getSelectedValue().toString()+"\"and title=\""+titleDatabase.getSelectedValue().toString());
-					resultSet = statement.executeQuery();
-					String path = null;
-					while(resultSet.next()){
-						path = resultSet.getString("path");
-					}
-					paused2=true;
-					flacPlayer2.pause();
-					flacPlayer2.load(path);
-					hasTrack2 = true;
-					player2.setText(artistDatabase.getSelectedValue().toString()+" - "+titleDatabase.getSelectedValue().toString());
-					loadEject2.setText("Eject");
-					back2.setEnabled(true);
-					playPause2.setEnabled(true);
-					statement.close();
-					connect.close();
-				}catch(Exception ex){ex.printStackTrace();}
-			}else{
-				player2.setText("Please Select a Track to Load");
-			}
-		}
-	}
-	public void getAllArtists(){
-		Connection connect = null;
-		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from MUSIC ORDER BY artist");
 
-			resultSet = statement.executeQuery();
-			while(resultSet.next()){
-				artistModel.addElement(resultSet.getString("artist"));
-			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+
+
 
 	}
-	public void getAllTitles(){
-		Connection connect = null;
-		ResultSet resultSet = null;
-		try {
-
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT title from MUSIC");
-
-			resultSet = statement.executeQuery();
-			while(resultSet.next()){
-				titleModel.addElement(resultSet.getString("title"));
-			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
-
-	}
-
-	public void getTitlesFromArtist(String artist){
-		Connection connect = null;
-		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\"");
-			resultSet = statement.executeQuery();
-
-			titleModel.removeAllElements();
-			int i=0;
-			while(resultSet.next()){
-				titleModel.addElement(resultSet.getString("title"));
-				i++;
-			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
-
-	}
-	public void getAlbumsFromArtist(String artist){
-		Connection connect = null;
-		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from MUSIC WHERE artist=\""+artist+"\"");
-			resultSet = statement.executeQuery();
-
-			albumModel.removeAllElements();
-			albumModel.addElement("All Albums");
-			int i=0;
-			while(resultSet.next()){
-				albumModel.addElement(resultSet.getString("album"));
-				i++;
-			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
-
-	}
-	public void getTitlesFromAlbumArtist(String artist, String album){
-		Connection connect = null;
-		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\" and album=\""+album+"\"");
-			resultSet = statement.executeQuery();
-
-			titleModel.removeAllElements();
-			int i=0;
-			while(resultSet.next()){
-				titleModel.addElement(resultSet.getString("title"));
-				i++;
-			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
-
-	}
-
-	public static void main(String[] args) {
-		FlacRadioGUI gui = new FlacRadioGUI();
-		gui.setVisible(true);
-	}
-
 }
