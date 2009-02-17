@@ -27,7 +27,8 @@ public class MetaTest {
 					FlacTag tag = reader.read(fi);
 					output += tag.getFirstArtist()+" "+tag.getFirstTitle()+"\n";
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"+"user=root&password=");
+					connect = DriverManager.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+							+ "user=ambigui1_wjcu887&password=flacradio");
 					PreparedStatement statement1 = connect.prepareStatement("SELECT path FROM music WHERE path='"+path+"/"+list[i].toString()+"'");
 					ResultSet result = statement1.executeQuery();
 					if(!result.first()){

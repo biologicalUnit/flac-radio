@@ -137,9 +137,10 @@ public class FlacRadioGUI extends JFrame implements Runnable{
 		ResultSet resultSet = null;
 		if(db.getArtist() != null && db.getTitle() != null){
 			try {
+				
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
-						+ "user=root&password=");
+				connect = DriverManager.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+						+ "user=ambigui1_wjcu887&password=flacradio");
 				PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+db.getArtist()+"\"and title=\""+db.getTitle()+"\"");
 				resultSet = statement.executeQuery();
 				String path = null;
