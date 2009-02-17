@@ -132,7 +132,7 @@ public class FlacRadioGUI extends JFrame implements Runnable{
 
 	public void run(){
 		player.setText(db.getArtist()+" \n "+db.getTitle());
-		lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
+		//lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
 		Connection connect = null;
 		ResultSet resultSet = null;
 		if(db.getArtist() != null && db.getTitle() != null){
