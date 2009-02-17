@@ -117,9 +117,9 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from MUSIC ORDER BY artist");
+			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+					+ "user=ambigui1_wjcu887&password=flacradio");
+			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from music ORDER BY artist");
 
 			resultSet = statement.executeQuery();
 			while(resultSet.next()){
@@ -137,9 +137,9 @@ public class FlacRadioDb extends JFrame{
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
-			PreparedStatement statement = connect.prepareStatement("SELECT title from MUSIC");
+			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+					+ "user=ambigui1_wjcu887&password=flacradio");
+			PreparedStatement statement = connect.prepareStatement("SELECT title from music");
 
 			resultSet = statement.executeQuery();
 			while(resultSet.next()){
@@ -157,10 +157,10 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
+			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+					+ "user=ambigui1_wjcu887&password=flacradio");
 
-			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\"");
+			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\"");
 			resultSet = statement.executeQuery();
 
 			titleModel.removeAllElements();
@@ -180,10 +180,10 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
+			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+					+ "user=ambigui1_wjcu887&password=flacradio");
 
-			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from MUSIC WHERE artist=\""+artist+"\"");
+			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from music WHERE artist=\""+artist+"\"");
 			resultSet = statement.executeQuery();
 
 			albumModel.removeAllElements();
@@ -204,10 +204,10 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
+			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
+					+ "user=ambigui1_wjcu887&password=flacradio");
 
-			PreparedStatement statement=connect.prepareStatement("SELECT title from MUSIC WHERE artist=\""+artist+"\" and album=\""+album+"\"");
+			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\" and album=\""+album+"\"");
 			resultSet = statement.executeQuery();
 
 			titleModel.removeAllElements();
