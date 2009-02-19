@@ -117,8 +117,8 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
-					+ "user=ambigui1_wjcu887&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from music ORDER BY artist");
 
 			resultSet = statement.executeQuery();
@@ -137,8 +137,8 @@ public class FlacRadioDb extends JFrame{
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
-					+ "user=ambigui1_wjcu887&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 			PreparedStatement statement = connect.prepareStatement("SELECT title from music");
 
 			resultSet = statement.executeQuery();
@@ -157,8 +157,8 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
-					+ "user=ambigui1_wjcu887&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 
 			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\"");
 			resultSet = statement.executeQuery();
@@ -180,8 +180,8 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
-					+ "user=ambigui1_wjcu887&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 
 			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from music WHERE artist=\""+artist+"\"");
 			resultSet = statement.executeQuery();
@@ -204,8 +204,8 @@ public class FlacRadioDb extends JFrame{
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://ambiguitydesigns.com/ambigui1_music?"
-					+ "user=ambigui1_wjcu887&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 
 			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\" and album=\""+album+"\"");
 			resultSet = statement.executeQuery();
