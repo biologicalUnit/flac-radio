@@ -19,14 +19,15 @@ public class FlacRadioDb extends JFrame{
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
 	private DefaultListModel albumModel;
+	private FlacRadioGUI gui1,gui2,gui3;
 
 	private JPanel panel;
 	private Thread t1;
 
 	public FlacRadioDb(){
 
-		setSize(825,225);
-
+		setSize(800,600);
+		
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
@@ -41,20 +42,22 @@ public class FlacRadioDb extends JFrame{
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		this.setTitle("FlacRadioDb");
 
 		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
 		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
 		JScrollPane titleScrollPane = new JScrollPane(titleDatabase);
 
-		artistScrollPane.setLocation(0,0);
+		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
 
-		albumScrollPane.setLocation(210,0);
+		albumScrollPane.setLocation(530,0);
 		albumScrollPane.setSize(200,200);
 		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
 
-		titleScrollPane.setLocation(410,0);
+		titleScrollPane.setLocation(330,200);
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
 
@@ -82,7 +85,21 @@ public class FlacRadioDb extends JFrame{
 		});
 
 
-
+		gui1 = new FlacRadioGUI(this);
+		gui2 = new FlacRadioGUI(this);
+		gui3 = new FlacRadioGUI(this);
+		gui1.setSize(310,175);
+		gui2.setSize(310,175);
+		gui3.setSize(310,175);
+		gui1.setLocation(0, 0);
+		gui2.setLocation(0,180);
+		gui3.setLocation(0,360);
+		gui1.setVisible(true);
+		gui2.setVisible(true);
+		gui3.setVisible(true);
+		this.add(gui1);
+		this.add(gui2);
+		this.add(gui3);
 		getContentPane().add(panel);
 		panel.setBackground(Color.white);
 		panel.add(artistScrollPane);
@@ -90,8 +107,10 @@ public class FlacRadioDb extends JFrame{
 		panel.add(albumScrollPane);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
+		
 
 	}
+
 
 	public String getArtist(){
 		if(artistDatabase.getSelectedIndex() >=0){
@@ -227,10 +246,6 @@ public class FlacRadioDb extends JFrame{
 	}
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
-		FlacRadioGUI gui1 = new FlacRadioGUI(db);
-		gui1.setVisible(true);
-		FlacRadioGUI gui2 = new FlacRadioGUI(db);
-		gui2.setVisible(true);
 		db.setVisible(true);
 	}
 
