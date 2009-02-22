@@ -11,7 +11,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class FlacRadioGUI extends JFrame implements Runnable{
+public class FlacRadioGUI extends JPanel implements Runnable{
 	private final String trackName = System.currentTimeMillis()+".wav";
 	private FlacPlayer flacPlayer;
 	private FlacRadioDb db;
@@ -19,27 +19,26 @@ public class FlacRadioGUI extends JFrame implements Runnable{
 	private JButton loadEject;
 	private JButton back;
 	private JTextArea player;
-	private JPanel panel;
+	//private JPanel panel;
 	private boolean paused;
 	private boolean hasTrack;
-	private JTextArea lyrics;
+	//private JTextArea lyrics;
 
 	public FlacRadioGUI(FlacRadioDb data){
 
 		db = data;
-		db.setVisible(true);
+		//db.setVisible(true);
 		flacPlayer = new FlacPlayer(trackName);
-
-		setSize(310,650);
+		
 		setVisible(true);
 
 		player = new JTextArea("No Track Loaded");
 		player.setEditable(false);
 		player.setDragEnabled(true);
 		
-		lyrics = new JTextArea("No Lyrics to Display");
-		lyrics.setEditable(false);
-		JScrollPane lyricsScrollPane = new JScrollPane(lyrics);
+	//	lyrics = new JTextArea("No Lyrics to Display");
+	//	lyrics.setEditable(false);
+	//	JScrollPane lyricsScrollPane = new JScrollPane(lyrics);
 
 		playPause = new JButton("Play");
 		paused=true;
@@ -61,10 +60,10 @@ public class FlacRadioGUI extends JFrame implements Runnable{
 		player.setSize(200,100);
 		player.setBorder(BorderFactory.createTitledBorder("Player 1"));
 		
-		lyricsScrollPane.setLocation(10,200);
-		lyricsScrollPane.setSize(300,300);
+	//	lyricsScrollPane.setLocation(10,200);
+	//	lyricsScrollPane.setSize(300,300);
 		
-		panel = new JPanel();
+		//panel = new JPanel();
 
 		playPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -84,15 +83,15 @@ public class FlacRadioGUI extends JFrame implements Runnable{
 			}
 		});
 
-		getContentPane().add(panel);
-		panel.setBackground(Color.white);
-		panel.add(player);
-		panel.add(playPause);
-		panel.add(back);
-		panel.add(loadEject);
-		panel.add(lyricsScrollPane);
-		panel.setLayout(null);
-		panel.setVisible(true);
+		
+		this.setBackground(Color.white);
+		this.add(player);
+		this.add(playPause);
+		this.add(back);
+		this.add(loadEject);
+	//	this.add(lyricsScrollPane);
+		this.setLayout(null);
+		this.setVisible(true);
 
 	}
 	public void play(){
