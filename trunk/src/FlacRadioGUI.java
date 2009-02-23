@@ -131,18 +131,13 @@ public class FlacRadioGUI extends JPanel implements Runnable{
 
 	public void run(){
 		player.setText(db.getArtist()+" \n "+db.getTitle());
-		//lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
-		Connection connect = null;
+	//	lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
 		ResultSet resultSet = null;
 		if(db.getArtist() != null && db.getTitle() != null){
-			try {
-				
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connect = DriverManager.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-						+ "user=wjcuflac&password=flacradio");
-				PreparedStatement statement = connect.prepareStatement("SELECT path from MUSIC WHERE artist=\""+db.getArtist()+"\"and title=\""+db.getTitle()+"\"");
-				resultSet = statement.executeQuery();
+			
+				resultSet = db.getDBInfo("SELECT path from MUSIC WHERE artist=\""+db.getArtist()+"\"and title=\""+db.getTitle()+"\"");
 				String path = null;
+				try {
 				while(resultSet.next()){
 					path = resultSet.getString("path");
 				}
@@ -153,8 +148,6 @@ public class FlacRadioGUI extends JPanel implements Runnable{
 				loadEject.setText("Eject");
 				back.setEnabled(true);
 				playPause.setEnabled(true);
-				statement.close();
-				connect.close();
 			}catch(Exception ex){ex.printStackTrace();}
 		}else{
 			player.setText("Please Select a Track to Load");
