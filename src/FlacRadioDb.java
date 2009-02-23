@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -27,7 +28,7 @@ public class FlacRadioDb extends JFrame{
 	public FlacRadioDb(){
 
 		setSize(800,600);
-		
+
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
@@ -42,7 +43,7 @@ public class FlacRadioDb extends JFrame{
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		this.setTitle("FlacRadioDb");
 
 		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
@@ -107,10 +108,9 @@ public class FlacRadioDb extends JFrame{
 		panel.add(albumScrollPane);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
-		
+
 
 	}
-
 
 	public String getArtist(){
 		if(artistDatabase.getSelectedIndex() >=0){
@@ -131,122 +131,93 @@ public class FlacRadioDb extends JFrame{
 	}
 
 	public void getAllArtists(){
-		Connection connect = null;
 		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
-			PreparedStatement statement = connect.prepareStatement("SELECT DISTINCT artist from music ORDER BY artist");
-
-			resultSet = statement.executeQuery();
+			resultSet = getDBInfo("SELECT DISTINCT artist from music ORDER BY artist");
+			try {
 			while(resultSet.next()){
 				artistModel.addElement(resultSet.getString("artist"));
 			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+		}catch(SQLException ex){ex.printStackTrace();}
 
 	}
 	public void getAllTitles(){
-		Connection connect = null;
 		ResultSet resultSet = null;
-		try {
+		resultSet = getDBInfo("SELECT title from music");
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
-			PreparedStatement statement = connect.prepareStatement("SELECT title from music");
-
-			resultSet = statement.executeQuery();
+			try {
 			while(resultSet.next()){
 				titleModel.addElement(resultSet.getString("title"));
 			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+		}catch(SQLException ex){ex.printStackTrace();}
 
 	}
 
 	public void getTitlesFromArtist(String artist){
-		Connection connect = null;
 		ResultSet resultSet = null;
+		resultSet = getDBInfo("SELECT title from music WHERE artist=\""+artist+"\"");
+		titleModel.removeAllElements();
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\"");
-			resultSet = statement.executeQuery();
-
-			titleModel.removeAllElements();
 			int i=0;
 			while(resultSet.next()){
 				titleModel.addElement(resultSet.getString("title"));
 				i++;
 			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+		}catch(SQLException ex){ex.printStackTrace();}
 
 	}
 	public void getAlbumsFromArtist(String artist){
-		Connection connect = null;
 		ResultSet resultSet = null;
+		resultSet = getDBInfo("SELECT DISTINCT album from music WHERE artist=\""+artist+"\"");
+		albumModel.removeAllElements();
+		albumModel.addElement("All Albums");
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT DISTINCT album from music WHERE artist=\""+artist+"\"");
-			resultSet = statement.executeQuery();
-
-			albumModel.removeAllElements();
-			albumModel.addElement("All Albums");
 			int i=0;
 			while(resultSet.next()){
 				albumModel.addElement(resultSet.getString("album"));
 				i++;
 			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+		}catch(SQLException ex){ex.printStackTrace();}
 
 	}
 	public void getTitlesFromAlbumArtist(String artist, String album){
-		Connection connect = null;
 		ResultSet resultSet = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
-
-			PreparedStatement statement=connect.prepareStatement("SELECT title from music WHERE artist=\""+artist+"\" and album=\""+album+"\"");
-			resultSet = statement.executeQuery();
-
-			titleModel.removeAllElements();
-			int i=0;
+		resultSet = getDBInfo("SELECT title from music WHERE artist=\""+artist+"\" and album=\""+album+"\"");
+		titleModel.removeAllElements();
+		int i=0;
+		try{
 			while(resultSet.next()){
 				titleModel.addElement(resultSet.getString("title"));
 				i++;
 			}
-			statement.close();
-			connect.close();
-		}catch(Exception ex){ex.printStackTrace();}
+		}catch(SQLException e){e.printStackTrace();}
 
 	}
-	
+
+	public ResultSet getDBInfo(String mysqlStatement){
+		Connection connect = null;
+		ResultSet resultSet = null;
+		try{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connect = DriverManager
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
+			PreparedStatement statement = connect.prepareStatement(mysqlStatement);
+			resultSet = statement.executeQuery();
+		}catch(Exception e){e.printStackTrace();}
+		return resultSet;
+	}
+
 	public void makeThread(Runnable run){
 		new Thread(run).start();
 	}
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
+
 		db.setVisible(true);
 	}
 
 }
+
+
+
+
