@@ -1,6 +1,11 @@
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,18 +22,22 @@ public class FlacRadioDb extends JFrame{
 	private JList albumDatabase;
 	private JList titleDatabase;
 
+	private String selectedArtist;
+	private String selectedTitle;
+
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
 	private DefaultListModel albumModel;
 	private FlacRadioGUI gui1,gui2,gui3;
-
+	
 	private JPanel panel;
 	private Thread t1;
 
 	public FlacRadioDb(){
 
 		setSize(800,600);
-
+		selectedArtist = null;
+		selectedTitle = null;
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
@@ -39,6 +48,7 @@ public class FlacRadioDb extends JFrame{
 		titleDatabase = new JList(titleModel);
 
 		titleDatabase.setDragEnabled(true);
+		
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -86,6 +96,8 @@ public class FlacRadioDb extends JFrame{
 		});
 
 
+
+
 		gui1 = new FlacRadioGUI(this);
 		gui2 = new FlacRadioGUI(this);
 		gui3 = new FlacRadioGUI(this);
@@ -108,8 +120,13 @@ public class FlacRadioDb extends JFrame{
 		panel.add(albumScrollPane);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
-
-
+		
+		gui1.setEnabled(true);
+		gui1.setDropTarget(new DropTarget(gui1,gui1));
+		gui2.setEnabled(true);
+		gui2.setDropTarget(new DropTarget(gui2,gui2));
+		gui3.setEnabled(true);
+		gui3.setDropTarget(new DropTarget(gui3,gui3));
 	}
 
 	public String getArtist(){
@@ -132,23 +149,12 @@ public class FlacRadioDb extends JFrame{
 
 	public void getAllArtists(){
 		ResultSet resultSet = null;
-			resultSet = getDBInfo("SELECT DISTINCT artist from music ORDER BY artist");
-			try {
+		resultSet = getDBInfo("SELECT DISTINCT artist from music ORDER BY artist");
+		try {
 			while(resultSet.next()){
 				artistModel.addElement(resultSet.getString("artist"));
 			}
-		}catch(SQLException ex){ex.printStackTrace();}
-
-	}
-	public void getAllTitles(){
-		ResultSet resultSet = null;
-		resultSet = getDBInfo("SELECT title from music");
-
-			try {
-			while(resultSet.next()){
-				titleModel.addElement(resultSet.getString("title"));
-			}
-		}catch(SQLException ex){ex.printStackTrace();}
+		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 
 	}
 
@@ -162,7 +168,7 @@ public class FlacRadioDb extends JFrame{
 				titleModel.addElement(resultSet.getString("title"));
 				i++;
 			}
-		}catch(SQLException ex){ex.printStackTrace();}
+		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 
 	}
 	public void getAlbumsFromArtist(String artist){
@@ -176,7 +182,7 @@ public class FlacRadioDb extends JFrame{
 				albumModel.addElement(resultSet.getString("album"));
 				i++;
 			}
-		}catch(SQLException ex){ex.printStackTrace();}
+		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 
 	}
 	public void getTitlesFromAlbumArtist(String artist, String album){
@@ -189,7 +195,7 @@ public class FlacRadioDb extends JFrame{
 				titleModel.addElement(resultSet.getString("title"));
 				i++;
 			}
-		}catch(SQLException e){e.printStackTrace();}
+		}catch(SQLException e){JOptionPane.showMessageDialog(this, "Database Error.");}
 
 	}
 
@@ -199,14 +205,29 @@ public class FlacRadioDb extends JFrame{
 		try{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-					+ "user=wjcuflac&password=flacradio");
+			.getConnection("jdbc:mysql://localhost/music?"
+					+ "user=root&password=");
 			PreparedStatement statement = connect.prepareStatement(mysqlStatement);
 			resultSet = statement.executeQuery();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){JOptionPane.showMessageDialog(this, "Database Error.");}
 		return resultSet;
 	}
+	public void setSelectedArtist(){
+		selectedArtist = getArtist();
 
+	}
+	public void setSelectedTitle(){
+		selectedTitle = getTitle();
+		System.out.println(selectedTitle);
+	}
+	public String getSelectedTitle(){
+		setSelectedTitle();
+		return selectedTitle;
+	}
+	public String getSelectedArtist(){
+		setSelectedArtist();
+		return selectedArtist;
+	}
 	public void makeThread(Runnable run){
 		new Thread(run).start();
 	}
@@ -215,6 +236,8 @@ public class FlacRadioDb extends JFrame{
 
 		db.setVisible(true);
 	}
+
+
 
 }
 
