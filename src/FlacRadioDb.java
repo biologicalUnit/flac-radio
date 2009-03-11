@@ -21,9 +21,12 @@ public class FlacRadioDb extends JFrame{
 	private JList artistDatabase;
 	private JList albumDatabase;
 	private JList titleDatabase;
-
+	private JList searchDatabase;
+	private JTextField searchBox;
+	private JComboBox choices;
 	private String selectedArtist;
 	private String selectedTitle;
+	private JButton searchButton;
 
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
@@ -35,13 +38,16 @@ public class FlacRadioDb extends JFrame{
 
 	public FlacRadioDb(){
 
-		setSize(800,600);
+		setSize(850,700);
 		selectedArtist = null;
 		selectedTitle = null;
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
-
+		searchBox = new JTextField(20);
+		searchButton = new JButton("Search");
+		String[] comboBoxString = { "Artist", "Album", "Title"};
+		choices = new JComboBox(comboBoxString);
 		artistDatabase = new JList(artistModel);
 		getAllArtists();
 		albumDatabase = new JList(albumModel);
@@ -59,7 +65,8 @@ public class FlacRadioDb extends JFrame{
 		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
 		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
 		JScrollPane titleScrollPane = new JScrollPane(titleDatabase);
-
+		JScrollPane searchScrollPane = new JScrollPane(searchDatabase);
+		
 		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
@@ -71,7 +78,22 @@ public class FlacRadioDb extends JFrame{
 		titleScrollPane.setLocation(330,200);
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
-
+		
+		searchScrollPane.setLocation(330,430);
+		searchScrollPane.setSize(410,200);
+		searchScrollPane.setBorder(BorderFactory.createTitledBorder("Search Result"));
+		
+		searchBox.setLocation(330, 400);
+		searchBox.setSize(190,25);
+		searchBox.setText("Input Search");
+		
+		choices.setSelectedIndex(2);
+		choices.setLocation(530, 400);
+		choices.setSize(100,25);
+		
+		searchButton.setLocation(640,400);
+		searchButton.setSize(100,25);
+		
 		panel = new JPanel();
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
@@ -113,11 +135,16 @@ public class FlacRadioDb extends JFrame{
 		this.add(gui1);
 		this.add(gui2);
 		this.add(gui3);
+		
 		getContentPane().add(panel);
 		panel.setBackground(Color.white);
 		panel.add(artistScrollPane);
 		panel.add(titleScrollPane);
 		panel.add(albumScrollPane);
+		panel.add(searchScrollPane);
+		panel.add(searchBox);
+		panel.add(choices);
+		panel.add(searchButton);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
 		
@@ -205,8 +232,7 @@ public class FlacRadioDb extends JFrame{
 		try{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/music?"
-					+ "user=root&password=");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"+"user=wjcuflac&password=flacradio");
 			PreparedStatement statement = connect.prepareStatement(mysqlStatement);
 			resultSet = statement.executeQuery();
 		}catch(Exception e){JOptionPane.showMessageDialog(this, "Database Error.");}
