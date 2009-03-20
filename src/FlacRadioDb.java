@@ -11,6 +11,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -21,7 +23,7 @@ public class FlacRadioDb extends JFrame{
 	private JList artistDatabase;
 	private JList albumDatabase;
 	private JList titleDatabase;
-	private JList searchDatabase;
+	private JTable searchDatabase;
 	private JTextField searchBox;
 	private JComboBox choices;
 	private String selectedArtist;
@@ -31,6 +33,7 @@ public class FlacRadioDb extends JFrame{
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
 	private DefaultListModel albumModel;
+	private DefaultTableModel searchModel;
 	private FlacRadioGUI gui1,gui2,gui3;
 	
 	private JPanel panel;
@@ -44,8 +47,10 @@ public class FlacRadioDb extends JFrame{
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
+		searchModel = new DefaultTableModel();
 		searchBox = new JTextField(20);
 		searchButton = new JButton("Search");
+		searchDatabase = new JTable(searchModel);
 		String[] comboBoxString = { "Artist", "Album", "Title"};
 		choices = new JComboBox(comboBoxString);
 		artistDatabase = new JList(artistModel);
@@ -54,11 +59,13 @@ public class FlacRadioDb extends JFrame{
 		titleDatabase = new JList(titleModel);
 
 		titleDatabase.setDragEnabled(true);
+		searchDatabase.setDragEnabled(true);
 		
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 
 		this.setTitle("FlacRadioDb");
 
@@ -116,10 +123,50 @@ public class FlacRadioDb extends JFrame{
 			}
 
 		});
+		titleDatabase.addListSelectionListener(new ListSelectionListener(){
+			public void valueChanged(ListSelectionEvent arg0) {
+				setSelectedArtist(getArtist());
+				setSelectedTitle(getTitle());
+			}
+		});
+		
+		searchDatabase.addMouseListener(new MouseListener(){
 
+			public void mouseClicked(MouseEvent e) {
+				getSelectedSearchArtistTitle();
+			}
 
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
 
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
 
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				search(searchBox.getText());
+			}
+		});
+		
+		searchModel.addColumn("Title");
+		searchModel.addColumn("Artist");
+		searchModel.addColumn("Album");
+		
 		gui1 = new FlacRadioGUI(this);
 		gui2 = new FlacRadioGUI(this);
 		gui3 = new FlacRadioGUI(this);
@@ -155,7 +202,12 @@ public class FlacRadioDb extends JFrame{
 		gui3.setEnabled(true);
 		gui3.setDropTarget(new DropTarget(gui3,gui3));
 	}
-
+	
+	public void getSelectedSearchArtistTitle(){
+		setSelectedArtist((String)this.searchModel.getValueAt(this.searchDatabase.getSelectedRow(), 1));
+		setSelectedTitle((String)this.searchModel.getValueAt(this.searchDatabase.getSelectedRow(), 0));
+	}
+	
 	public String getArtist(){
 		if(artistDatabase.getSelectedIndex() >=0){
 			return artistDatabase.getSelectedValue().toString();
@@ -232,38 +284,64 @@ public class FlacRadioDb extends JFrame{
 		try{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connect = DriverManager
-			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"+"user=wjcuflac&password=flacradio");
+			.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
+					+ "user=wjcuflac&password=flacradio");
 			PreparedStatement statement = connect.prepareStatement(mysqlStatement);
 			resultSet = statement.executeQuery();
 		}catch(Exception e){JOptionPane.showMessageDialog(this, "Database Error.");}
 		return resultSet;
 	}
-	public void setSelectedArtist(){
-		selectedArtist = getArtist();
+	public void setSelectedArtist(String artist){
+		selectedArtist = artist;
 
 	}
-	public void setSelectedTitle(){
-		selectedTitle = getTitle();
+	public void setSelectedTitle(String title){
+		selectedTitle = title;
 		System.out.println(selectedTitle);
 	}
 	public String getSelectedTitle(){
-		setSelectedTitle();
+		
 		return selectedTitle;
 	}
 	public String getSelectedArtist(){
-		setSelectedArtist();
+		
 		return selectedArtist;
 	}
 	public void makeThread(Runnable run){
 		new Thread(run).start();
 	}
+	public void search(String searchField){
+		ResultSet results=null;
+		int i=0;
+		while(searchModel.getRowCount()>0){
+			searchModel.removeRow(i);
+		}
+		if(choices.getSelectedItem().equals("Title")){
+			results = getDBInfo("SELECT DISTINCT title, artist, album from music WHERE title like \"%"+searchField+"%\"");
+		}else if(choices.getSelectedItem().equals("Artist")){
+			results = getDBInfo("SELECT DISTINCT title, artist, album from music WHERE artist like \"%"+searchField+"%\"");
+		}
+		else if(choices.getSelectedItem().equals("Album")){
+			results = getDBInfo("SELECT DISTINCT title, artist, album from music WHERE album like \"%"+searchField+"%\"");
+		}
+		try {
+			String title, artist, album;
+			while(results.next()){
+				title = results.getString("title");
+				artist = results.getString("artist");
+				album = results.getString("album");
+				searchModel.addRow(new String[]{title,artist,album});
+			}
+				
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
-
 		db.setVisible(true);
 	}
-
-
 
 }
 

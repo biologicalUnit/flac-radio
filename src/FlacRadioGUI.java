@@ -53,6 +53,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		playPause.setEnabled(false);
 		back.setEnabled(false);
 		eject.setEnabled(false);
+		
 
 		//placement and size for first set
 		playPause.setSize(95,25);
