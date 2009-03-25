@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener{
 	private final String trackName = System.currentTimeMillis()+".wav";
-	private FlacPlayer flacPlayer;
+	public FlacPlayer flacPlayer;
 	private FlacRadioDb db;
 	private JButton playPause;
 	private JButton eject;
