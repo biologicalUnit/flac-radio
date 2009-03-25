@@ -55,7 +55,8 @@ public class FlacPlayer{
 	public double getTime(){
 		return player.getDuration().getSeconds();
 	}
-	public void getLyrics(String artist, String title){
+	public String getLyrics(String artist, String title){
+		String text = new String();
 		try{
 			URL lyricURL = new URL("http://lyricwiki.org/api.php?func=getSong&artist="+artist.replace(" ","_")+"&song="+title.replace(" ","_")+"&fmt=text");
 			lyricURL.openConnection();
@@ -66,9 +67,10 @@ public class FlacPlayer{
 
 			while ((inputLine = in.readLine()) != null)
 				System.out.println(inputLine);
-
+				text.concat(inputLine);
 			in.close();
 		}catch(Exception e){}
+		return text;
 	}
 
 }

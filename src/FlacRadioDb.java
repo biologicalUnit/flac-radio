@@ -29,6 +29,12 @@ public class FlacRadioDb extends JFrame{
 	private String selectedArtist;
 	private String selectedTitle;
 	private JButton searchButton;
+	private JButton lyricsButton;
+	private JButton pushBoxButton;
+	
+//	private JMenuBar menuBar;
+//	private JMenuItem preference;
+//	private JMenu file;
 
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
@@ -41,7 +47,7 @@ public class FlacRadioDb extends JFrame{
 
 	public FlacRadioDb(){
 
-		setSize(850,700);
+		setSize(865,700);
 		selectedArtist = null;
 		selectedTitle = null;
 		artistModel = new DefaultListModel();
@@ -50,6 +56,8 @@ public class FlacRadioDb extends JFrame{
 		searchModel = new DefaultTableModel();
 		searchBox = new JTextField(20);
 		searchButton = new JButton("Search");
+		lyricsButton = new JButton("Info/Lyrics");
+		pushBoxButton = new JButton("Pushbox");
 		searchDatabase = new JTable(searchModel);
 		String[] comboBoxString = { "Artist", "Album", "Title"};
 		choices = new JComboBox(comboBoxString);
@@ -61,6 +69,13 @@ public class FlacRadioDb extends JFrame{
 		titleDatabase.setDragEnabled(true);
 		searchDatabase.setDragEnabled(true);
 		
+		
+//		menuBar = new JMenuBar();
+//		file = new JMenu("File");
+//		menuBar.add(file);
+//		preference = new JMenuItem("Preference");
+//		file.add(preference);
+//		menuBar.setLocation(0, 0);
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -100,6 +115,12 @@ public class FlacRadioDb extends JFrame{
 		
 		searchButton.setLocation(640,400);
 		searchButton.setSize(100,25);
+		
+		lyricsButton.setLocation(750,430);
+		lyricsButton.setSize(100,25);
+		
+		pushBoxButton.setLocation(750,460);
+		pushBoxButton.setSize(100,25);
 		
 		panel = new JPanel();
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
@@ -163,6 +184,35 @@ public class FlacRadioDb extends JFrame{
 			}
 		});
 		
+		lyricsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JFrame lyrics = new JFrame();
+				lyrics.setSize(500,500);
+				lyrics.setVisible(true);
+				JLabel text = new JLabel();
+				text.setSize(400,400);
+				text.setLocation(0,0);
+				text.setText(gui1.flacPlayer.getLyrics(getArtist(), getTitle()));
+				lyrics.add(text);
+				
+				
+			}
+		});
+		
+		pushBoxButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				JFrame pushbox = new JFrame();
+				pushbox.setSize(500,500);
+				pushbox.setVisible(true);
+				JTable pushDatabase = new JTable();
+				JScrollPane pushpane = new JScrollPane(pushDatabase);
+				pushpane.setLocation(0,0);
+				pushpane.setSize(400,400);
+				pushpane.setBorder(BorderFactory.createTitledBorder("Push Box"));
+				pushbox.add(pushpane);
+			}
+		});
+		
 		searchModel.addColumn("Title");
 		searchModel.addColumn("Artist");
 		searchModel.addColumn("Album");
@@ -192,8 +242,14 @@ public class FlacRadioDb extends JFrame{
 		panel.add(searchBox);
 		panel.add(choices);
 		panel.add(searchButton);
+		panel.add(lyricsButton);
+		panel.add(pushBoxButton);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
+		
+//		panel.add(menuBar);
+//		panel.add(file);
+//		panel.add(preference);
 		
 		gui1.setEnabled(true);
 		gui1.setDropTarget(new DropTarget(gui1,gui1));
