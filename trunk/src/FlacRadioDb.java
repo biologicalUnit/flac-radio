@@ -186,15 +186,8 @@ public class FlacRadioDb extends JFrame{
 		
 		lyricsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				JFrame lyrics = new JFrame();
-				lyrics.setSize(500,500);
-				lyrics.setVisible(true);
-				JLabel text = new JLabel();
-				text.setSize(400,400);
-				text.setLocation(0,0);
-				text.setText(gui1.flacPlayer.getLyrics(getArtist(), getTitle()));
-				lyrics.add(text);
 				
+				getLyrics();
 				
 			}
 		});
@@ -394,10 +387,26 @@ public class FlacRadioDb extends JFrame{
 			e.printStackTrace();
 		}
 	}
+	public void getLyrics(){
+		JFrame lyrics = new JFrame();
+		
+		lyrics.setSize(500,500);
+		lyrics.setVisible(true);
+		JTextArea text = new JTextArea();
+		JScrollPane scrollPane= new JScrollPane(text);
+		scrollPane.setSize(400,400);
+		scrollPane.setLocation(0,0);
+		text.setText(gui1.flacPlayer.getLyrics(getArtist(), getTitle()));
+		text.setEditable(false);
+		lyrics.add(scrollPane);
+		
+	}
+	
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
 		db.setVisible(true);
 	}
+	
 
 }
 

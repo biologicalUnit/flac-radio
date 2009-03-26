@@ -44,13 +44,13 @@ public class FlacPlayer{
 			player.stop();
 		}catch(Exception e){e.printStackTrace();}
 	}
-	
+
 	//Stops the track, resets it to the beginning
 	public void rewind(){
 		player.stop();
 		player.setMediaTime(player.RESET);
 	}
-	
+
 	//returns the length of the track in the form of seconds
 	public double getTime(){
 		return player.getDuration().getSeconds();
@@ -65,9 +65,11 @@ public class FlacPlayer{
 							lyricURL.openStream()));
 			String inputLine;
 
-			while ((inputLine = in.readLine()) != null)
+			while ((inputLine = in.readLine()) != null){
 				System.out.println(inputLine);
-				text.concat(inputLine);
+			text = text + inputLine + "\n";
+				
+			}
 			in.close();
 		}catch(Exception e){}
 		return text;
