@@ -61,8 +61,8 @@ public class FlacRadioDb extends JFrame{
 		mysqlUser = "root";
 		mysqlPass = "";
 
-		setSize(865,700);
-		
+		setSize(867,700);
+		this.setBackground(Color.decode("#B3FF81"));
 		selectedArtist = null;
 		selectedTitle = null;
 		selectedAlbum = null;
@@ -72,7 +72,7 @@ public class FlacRadioDb extends JFrame{
 		searchModel = new DefaultTableModel();
 		searchBox = new JTextField(20);
 		searchButton = new JButton("Search");
-		lyricsButton = new JButton("Info/Lyrics");
+		lyricsButton = new JButton("Info");
 		pushBoxButton = new JButton("Pushbox");
 		searchDatabase = new JTable(searchModel);
 		String[] comboBoxString = { "Artist", "Album", "Title"};
@@ -102,7 +102,6 @@ public class FlacRadioDb extends JFrame{
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
 
 		this.setTitle("FlacRadioDb");
 
@@ -114,18 +113,22 @@ public class FlacRadioDb extends JFrame{
 		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
+		artistScrollPane.setBackground(Color.decode("#B3FF81"));
 
 		albumScrollPane.setLocation(530,0);
 		albumScrollPane.setSize(200,200);
 		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
+		albumScrollPane.setBackground(Color.decode("#B3FF81"));
 
 		titleScrollPane.setLocation(330,200);
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
+		titleScrollPane.setBackground(Color.decode("#B3FF81"));
 		
 		searchScrollPane.setLocation(330,430);
 		searchScrollPane.setSize(410,200);
 		searchScrollPane.setBorder(BorderFactory.createTitledBorder("Search Result"));
+		searchScrollPane.setBackground(Color.decode("#B3FF81"));
 		
 		searchBox.setLocation(330, 400);
 		searchBox.setSize(190,25);
@@ -137,13 +140,14 @@ public class FlacRadioDb extends JFrame{
 		searchButton.setLocation(640,400);
 		searchButton.setSize(100,25);
 		
-		lyricsButton.setLocation(750,430);
-		lyricsButton.setSize(100,25);
+		lyricsButton.setLocation(750,20);
+		lyricsButton.setSize(110,75);
 		
-		pushBoxButton.setLocation(750,460);
-		pushBoxButton.setSize(100,25);
+		pushBoxButton.setLocation(750,120);
+		pushBoxButton.setSize(110,75);
 		
 		panel = new JPanel();
+		panel.setBackground(Color.decode("#B3FF81"));
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(artistDatabase.getSelectedIndex()>=0){
@@ -253,7 +257,6 @@ public class FlacRadioDb extends JFrame{
 	
 		
 		getContentPane().add(panel);
-		panel.setBackground(Color.white);
 		panel.add(artistScrollPane);
 		panel.add(titleScrollPane);
 		panel.add(albumScrollPane);
@@ -479,6 +482,7 @@ public class FlacRadioDb extends JFrame{
 		FlacRadioDb db = new FlacRadioDb();
 		db.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		db.setVisible(true);
+		
 		
 
 	}

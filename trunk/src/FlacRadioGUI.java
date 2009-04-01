@@ -56,11 +56,11 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 
 		//placement and size for first set
-		playPause.setSize(95,25);
+		playPause.setSize(95,50);
 		playPause.setLocation(10,115);
-		back.setSize(94,25);
+		back.setSize(95,50);
 		back.setLocation(113,115);
-		eject.setSize(95,25);
+		eject.setSize(95,50);
 		eject.setLocation(215,115);
 
 		artistText.setLocation(10, 10);
@@ -101,6 +101,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		this.setVisible(true);
 		dt = new DropTarget();
 		this.setEnabled(true);
+		this.setBackground(Color.decode("#B3FF81"));
 
 
 	}
