@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -39,6 +40,7 @@ public class FlacRadioDb extends JFrame{
 	private JButton searchButton;
 	private JButton lyricsButton;
 	private JButton pushBoxButton;
+	
 	
 	private String mysqlPath, mysqlUser, mysqlPass;
 	
@@ -152,6 +154,7 @@ public class FlacRadioDb extends JFrame{
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(artistDatabase.getSelectedIndex()>=0){
 					//getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
+					titleModel.clear();
 					getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
 				}
 			}
@@ -244,7 +247,7 @@ public class FlacRadioDb extends JFrame{
 		setJMenuBar(menuBar);
 		file = new JMenu("File");
 		menuBar.add(file);
-		preference = new JMenuItem("Preference");
+		preference = new JMenuItem("Preferences");
 		file.add(preference);
 		preference.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
