@@ -25,7 +25,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	private JButton playPause;
 	private JButton eject;
 	private JButton back;
-	private JLabel player;
+	private JLabel artistText, titleText;
 	//private JPanel panel;
 	private boolean paused;
 	private boolean hasTrack;
@@ -39,8 +39,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 		setVisible(true);
 
-		player = new JLabel("No Track Loaded");
-
+		artistText = new JLabel("LOAD A TRACK");
+		titleText = new JLabel("Click and Drag a song here");
 		//	lyrics = new JTextArea("No Lyrics to Display");
 		//	lyrics.setEditable(false);
 		//	JScrollPane lyricsScrollPane = new JScrollPane(lyrics);
@@ -53,7 +53,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		playPause.setEnabled(false);
 		back.setEnabled(false);
 		eject.setEnabled(false);
-		
+
 
 		//placement and size for first set
 		playPause.setSize(95,25);
@@ -63,9 +63,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		eject.setSize(95,25);
 		eject.setLocation(215,115);
 
-		player.setLocation(10, 10);
-		player.setSize(200,100);
-		player.setBorder(BorderFactory.createTitledBorder("Player"));
+		artistText.setLocation(10, 10);
+		artistText.setSize(300,15);
+		titleText.setLocation(10, 30);
+		titleText.setSize(300, 15);
 
 		//	lyricsScrollPane.setLocation(10,200);
 		//	lyricsScrollPane.setSize(300,300);
@@ -90,7 +91,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 
 		this.setBackground(Color.white);
-		this.add(player);
+		this.add(artistText);
+		this.add(titleText);
 		this.add(playPause);
 		this.add(back);
 		this.add(eject);
@@ -131,14 +133,16 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			eject.setEnabled(false);
 			back.setEnabled(false);
 			hasTrack = false;
-			player.setText("No Track Loaded");
+			artistText.setText("LOAD A TRACK");
+			titleText.setText("Click and Drag a Song Here");
 		}else{
 			db.makeThread(this);
 		}
 	}
 
 	public void run(){
-		player.setText(db.getSelectedArtist()+" \n "+db.getSelectedTitle());
+		artistText.setText(db.getSelectedArtist());
+		titleText.setText	(db.getSelectedTitle());
 		//	lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
 		ResultSet resultSet = null;
 		if(db.getSelectedArtist() != null && db.getSelectedTitle() != null){
@@ -157,7 +161,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 				eject.setEnabled(true);
 			}catch(Exception ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 		}else{
-			player.setText("Please Select a Track to Load");
+			artistText.setText("LOAD A TRACK");
+			titleText.setText("Click and Drag a Song Here");
 		}
 
 

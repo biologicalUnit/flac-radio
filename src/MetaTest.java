@@ -5,42 +5,64 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.jaudiotagger.audio.flac.*;
 import org.jaudiotagger.tag.flac.*;
 
 public class MetaTest {
-	public static void main(String[] args){
-		String path = "/Users/markryan/Documents/TestDB";
-		File dir = new File(path);
-		Connection connect = null;
-		String[] list = dir.list();
-		String output = "";
 
-		for (int i = 0; i < list.length; i++)  {
-			if(list[i].contains(".flac")){
-				FlacTagReader reader = new FlacTagReader();
-				RandomAccessFile fi;
-				String artist = "";
-				try {
-					fi = new RandomAccessFile(path+"/"+list[i],"r");
-					FlacTag tag = reader.read(fi);
-					output += tag.getFirstArtist()+" "+tag.getFirstTitle()+"\n";
-					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					connect = DriverManager.getConnection("jdbc:mysql://143.105.16.195/wjcuflac_music?"
-							+ "user=wjcuflac&password=flacradio");
-					PreparedStatement statement1 = connect.prepareStatement("SELECT path FROM music WHERE path='"+path+"/"+list[i].toString()+"'");
-					ResultSet result = statement1.executeQuery();
-					if(!result.first()){
-						PreparedStatement statement = connect.prepareStatement("INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+tag.getFirstAlbum()+"\", \""+path+"/"+list[i].toString()+"\")");
-						statement.execute();
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();}
+
+
+
+	public static void main(String[] args){
+		String path = "/Volumes/WD Passport 1/FlacFiles";
+		File dir = new File(path);
+		MetaTest meta = new MetaTest();
+		meta.scanDb(dir);
+
+	}
+	public void scanDb(File dir){
+		if (dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i=0; i<children.length; i++) {
+				scanDb(new File(dir, children[i]));
+			}
+
+
+			Connection connect = null;
+			String[] list = dir.list();
+			String output = "";
+
+			for (int i = 0; i < list.length; i++)  {
+				if(list[i].contains(".flac")){
+					FlacTagReader reader = new FlacTagReader();
+					RandomAccessFile fi;
+					String artist = "";
+					try {
+						fi = new RandomAccessFile(dir.toString()+"/"+list[i],"r");
+						FlacTag tag = reader.read(fi);
+						output += tag.getFirstArtist()+" "+tag.getFirstTitle()+"\n";
+						Class.forName("com.mysql.jdbc.Driver").newInstance();
+						connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
+								+ "user=root&password=");
+						String state1= "SELECT path FROM music WHERE path=\""+dir.toString()+"/"+list[i].toString()+"\"";
+						state1.replace("'", "''");
+						PreparedStatement statement1 = connect.prepareStatement(state1);
+						ResultSet result = statement1.executeQuery();
+						if(!result.first()){
+							String state = "INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+tag.getFirstAlbum()+"\", \""+dir.toString()+"/"+list[i].toString()+"\", \""+"*"+"\")";
+							state.replace("'", "\'");
+							PreparedStatement statement = connect.prepareStatement(state);
+							statement.execute();
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();}
+				}
+				System.out.println(output);
 			}
 		}
-
-		System.out.println(output);
 	}
 }
