@@ -63,7 +63,7 @@ public class FlacRadioDb extends JFrame{
 		mysqlUser = "root";
 		mysqlPass = "";
 
-		setSize(867,700);
+		setSize(900,700);
 		this.setBackground(Color.decode("#B3FF81"));
 		selectedArtist = null;
 		selectedTitle = null;
@@ -117,7 +117,7 @@ public class FlacRadioDb extends JFrame{
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
 		artistScrollPane.setBackground(Color.decode("#B3FF81"));
 
-		albumScrollPane.setLocation(530,0);
+		albumScrollPane.setLocation(537,0);
 		albumScrollPane.setSize(200,200);
 		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
 		albumScrollPane.setBackground(Color.decode("#B3FF81"));
@@ -153,9 +153,9 @@ public class FlacRadioDb extends JFrame{
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(artistDatabase.getSelectedIndex()>=0){
-					//getTitlesFromArtist(artistDatabase.getSelectedValue().toString());
-					titleModel.clear();
 					getAlbumsFromArtist(artistDatabase.getSelectedValue().toString());
+					albumDatabase.setSelectedIndex(0);
+					getTitlesFromAlbumArtist(artistDatabase.getSelectedValue().toString(),albumDatabase.getSelectedValue().toString());
 				}
 			}
 
