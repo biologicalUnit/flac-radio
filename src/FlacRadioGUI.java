@@ -63,9 +63,9 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		eject.setSize(95,50);
 		eject.setLocation(215,115);
 
-		artistText.setLocation(10, 10);
+		artistText.setLocation(10, 30);
 		artistText.setSize(300,15);
-		titleText.setLocation(10, 30);
+		titleText.setLocation(10, 60);
 		titleText.setSize(300, 15);
 
 		//	lyricsScrollPane.setLocation(10,200);
@@ -143,12 +143,11 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 	public void run(){
 		artistText.setText(db.getSelectedArtist());
-		titleText.setText	(db.getSelectedTitle());
-		//	lyrics.setText(flacPlayer.getLyrics(db.getArtist(), db.getTitle()));
+		titleText.setText(db.getSelectedTitle());
 		ResultSet resultSet = null;
-		if(db.getSelectedArtist() != null && db.getSelectedTitle() != null){
+		if(db.getSelectedArtist() != null && db.getSelectedTitle() != null && db.getSelectedAlbum() != null){
 
-			resultSet = db.getDBInfo("SELECT path from MUSIC WHERE artist=\""+db.getSelectedArtist()+"\"and title=\""+db.getSelectedTitle()+"\"");
+			resultSet = db.getDBInfo("SELECT path from MUSIC WHERE artist=\""+db.getSelectedArtist()+"\"and title=\""+db.getSelectedTitle()+"\"and album=\""+db.getSelectedAlbum()+"\"");
 			String path = null;
 			try {
 				while(resultSet.next()){
