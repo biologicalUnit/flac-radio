@@ -25,25 +25,27 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	private JButton playPause;
 	private JButton eject;
 	private JButton back;
-	private JLabel artistText, titleText;
+	private JLabel artistText, titleText, timeText;
 	//private JPanel panel;
 	private boolean paused;
 	private boolean hasTrack;
+	private TrackTimer timer;
 	//private JTextArea lyrics;
 	private DropTarget dt;
+	private Font labelFont,textFont;
 
 	public FlacRadioGUI(FlacRadioDb data){
 
 		db = data;
 		flacPlayer = new FlacPlayer(trackName);
-
+		labelFont = new Font("Serif", Font.BOLD, 18);
+		textFont = new Font("Serif", Font.BOLD, 25);
+		
 		setVisible(true);
 
 		artistText = new JLabel("LOAD A TRACK");
 		titleText = new JLabel("Click and Drag a song here");
-		//	lyrics = new JTextArea("No Lyrics to Display");
-		//	lyrics.setEditable(false);
-		//	JScrollPane lyricsScrollPane = new JScrollPane(lyrics);
+		timeText = new JLabel("0:00");
 
 		playPause = new JButton("Play");
 		paused=true;
@@ -58,15 +60,23 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		//placement and size for first set
 		playPause.setSize(95,50);
 		playPause.setLocation(10,115);
+		playPause.setFont(labelFont);
 		back.setSize(95,50);
 		back.setLocation(113,115);
+		back.setFont(labelFont);
 		eject.setSize(95,50);
 		eject.setLocation(215,115);
+		eject.setFont(labelFont);
 
 		artistText.setLocation(10, 30);
-		artistText.setSize(300,15);
+		artistText.setSize(250,20);
+		artistText.setFont(labelFont);
 		titleText.setLocation(10, 60);
-		titleText.setSize(300, 15);
+		titleText.setSize(250, 20);
+		titleText.setFont(labelFont);
+		timeText.setLocation(260,30);
+		timeText.setSize(50, 30);
+		timeText.setFont(textFont);
 
 		//	lyricsScrollPane.setLocation(10,200);
 		//	lyricsScrollPane.setSize(300,300);
@@ -90,13 +100,12 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		});
 
 
-		this.setBackground(Color.white);
 		this.add(artistText);
 		this.add(titleText);
+		this.add(timeText);
 		this.add(playPause);
 		this.add(back);
 		this.add(eject);
-		//	this.add(lyricsScrollPane);
 		this.setLayout(null);
 		this.setVisible(true);
 		dt = new DropTarget();
@@ -108,18 +117,26 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	public void play(){
 		if(paused){
 			flacPlayer.play();
+			Thread thread = new Thread(timer);
+			timer.setCountDown(true);
+			thread.start();
 			paused = false;
 			playPause.setText("Pause");
 
 		}else{
 			flacPlayer.pause();
+			timer.setCountDown(false);
 			paused = true;
 			playPause.setText("Play");
-
 		}
 	}
 
 	public void rewind(){
+		timer.setCountDown(false);
+		double time = flacPlayer.getTime();
+		int min = (int)time/60;
+		int sec = (int)time % 60;
+		timer = new TrackTimer(this,min,sec);
 		flacPlayer.rewind();
 	}
 	public void ejectLoad(){
@@ -128,6 +145,9 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 				flacPlayer.pause();
 				playPause.setText("Play");
 			}
+			timer.setCountDown(false);
+			timer.setMinutes(0);
+			timer.setSeconds(0);
 			paused=true;
 			flacPlayer.pause();
 			playPause.setEnabled(false);
@@ -159,6 +179,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 				back.setEnabled(true);
 				playPause.setEnabled(true);
 				eject.setEnabled(true);
+				double time = flacPlayer.getTime();
+				int min = (int)time/60;
+				int sec = (int)time % 60;
+				timer = new TrackTimer(this,min,sec);
 			}catch(Exception ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 		}else{
 			artistText.setText("LOAD A TRACK");
@@ -169,8 +193,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 
 	}
+	public void setTimeText(String text){
+		timeText.setText(text);
+	}
 	public void dragEnter(DropTargetDragEvent arg0) {
-		System.out.println("Hello");
 
 	}
 
@@ -186,13 +212,16 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 	public void drop(DropTargetDropEvent dtde) {
 		try {
+			if(hasTrack){
+				ejectLoad();
+				ejectLoad();
+			}
 			dtde.acceptDrop(1);
 			ejectLoad();
 		}catch(Exception e){e.printStackTrace();}
 	}
 
 	public void dropActionChanged(DropTargetDragEvent dtde) {
-		// TODO Auto-generated method stub
-		System.out.println("Worlds");
+		// TODO Auto-generated method
 	}
 }

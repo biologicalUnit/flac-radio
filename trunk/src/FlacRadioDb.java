@@ -40,6 +40,9 @@ public class FlacRadioDb extends JFrame{
 	private JButton searchButton;
 	private JButton lyricsButton;
 	private JButton pushBoxButton;
+	private JTextField locationField;
+    private JTextField userNameField;
+    private JTextField passwordField;
 	
 	
 	private String mysqlPath, mysqlUser, mysqlPass;
@@ -89,23 +92,26 @@ public class FlacRadioDb extends JFrame{
 		 
 		
 		//Load Previous preferences from file (MySQL Path, USER, PASS)
-//		FileInputStream fin;		
-//		try
-//		{
-//		    fin = new FileInputStream ("preferences");
-//		    BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
-//		    mysqlPath = reader.readLine();
-//		    mysqlUser = reader.readLine();
-//		    mysqlPass = reader.readLine();
-//		    fin.close();		
-//		}catch(Exception e){System.out.println("Oops No File");}
+		FileInputStream fin;		
+		try
+		{
+		    fin = new FileInputStream ("preferences");
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+		    mysqlPath = reader.readLine();
+		    System.out.println(mysqlPath);
+		    mysqlUser = reader.readLine();
+		    System.out.println(mysqlUser);
+		    mysqlPass = reader.readLine();
+		    System.out.println(mysqlPass);
+		    fin.close();		
+		}catch(Exception e){System.out.println("Oops No File");}
 		
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		titleDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		this.setTitle("FlacRadioDb");
+		this.setTitle("F-Radio");
 
 		JScrollPane artistScrollPane = new JScrollPane(artistDatabase);
 		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
@@ -222,7 +228,7 @@ public class FlacRadioDb extends JFrame{
 		
 		pushBoxButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
-				//getPushBox();
+				getPushBox();
 			}
 		});
 		
@@ -316,20 +322,6 @@ public class FlacRadioDb extends JFrame{
 		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 
 	}
-
-//	public void getTitlesFromArtist(String artist){
-//		ResultSet resultSet = null;
-//		resultSet = getDBInfo("SELECT title from music WHERE artist=\""+artist+"\"");
-//		titleModel.removeAllElements();
-//		try {
-//			int i=0;
-//			while(resultSet.next()){
-//				titleModel.addElement(resultSet.getString("title"));
-//				i++;
-//			}
-//		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
-//
-//	}
 	public void getAlbumsFromArtist(String artist){
 		ResultSet resultSet = null;
 		resultSet = getDBInfo("SELECT DISTINCT album from music WHERE artist=\""+artist+"\"");
@@ -425,27 +417,81 @@ public class FlacRadioDb extends JFrame{
 	}
 	 public void getLyrics(){
          JFrame lyrics = new JFrame();
-         
          lyrics.setSize(500,500);
          lyrics.setVisible(true);
          JTextArea text = new JTextArea();
          JScrollPane scrollPane= new JScrollPane(text);
-         scrollPane.setSize(400,400);
-         scrollPane.setLocation(0,0);
-         text.setText(gui1.flacPlayer.getLyrics(getSelectedArtist(), getSelectedTitle()));
+         scrollPane.setSize(300,300);
+         scrollPane.setLocation(5,60);
+         text.setText("ARTIST: "+this.getSelectedArtist()+"\n"+this.getSelectedAlbum()+"\n"+this.getSelectedTitle()+"\n\n"+gui1.flacPlayer.getLyrics(getSelectedArtist(), getSelectedTitle()));
          text.setEditable(false);
          lyrics.add(scrollPane);
          lyrics.setVisible(true);
          
  }
 	 public void setPreferences(){
+		 JFrame prefs = new JFrame();
+         prefs.setSize(500,500);
+         prefs.setVisible(true);
+         
+         locationField = new JTextField();
+         userNameField = new JTextField();
+         passwordField = new JTextField();
+         JLabel locationLabel = new JLabel("Location to MySql Database: ");
+         JLabel userNameLabel = new JLabel("MySql Username: ");
+         JLabel passwordLabel = new JLabel("MySql Password: ");
+         JButton updateButton = new JButton("Update");
+         
+         locationField.setSize(150, 20);
+         userNameField.setSize(150, 20);
+         passwordField.setSize(150, 20);
+         updateButton.setSize(100, 75);
+         
+         locationLabel.setSize(250, 20);
+         userNameLabel.setSize(250, 20);
+         passwordLabel.setSize(250, 20);
+         
+         locationField.setLocation(300,20);
+         userNameField.setLocation(300,50);
+         passwordField.setLocation(300,80);
+         updateButton.setLocation(20, 120);
+         
+         locationLabel.setLocation(20,20);
+         userNameLabel.setLocation(20,50);
+         passwordLabel.setLocation(20,80);
+         
+         prefs.add(locationLabel);
+         prefs.add(userNameLabel);
+         prefs.add(passwordLabel);
+         
+         prefs.add(locationField);
+         prefs.add(userNameField);
+         prefs.add(passwordField);
+         prefs.add(updateButton);
+         prefs.setLayout(null);
+         prefs.setVisible(true);
+ 		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				updatePrefs();
+			}
+		});
+		 
+
+	 }
+	 public void updatePrefs(){
 		 FileOutputStream fout;
 			try
 			{
+				String path;
+				String user;
+				String pass;
+				path = locationField.getText();
+				user = userNameField.getText();
+				pass = passwordField.getText();
 			    fout = new FileOutputStream ("preferences");
-			    new PrintStream(fout).println ("localhost/music");//path
-			    new PrintStream(fout).println ("root");//user
-			    new PrintStream(fout).println ("");//password
+			    new PrintStream(fout).println (path);//path
+			    new PrintStream(fout).println (user);//user
+			    new PrintStream(fout).println (pass);//password
 			    fout.close();		
 			}
 			// Catches any error conditions
@@ -453,33 +499,29 @@ public class FlacRadioDb extends JFrame{
 			{
 				System.err.println ("Unable to write to file");
 			}
-
 	 }
 
-//	public void getPushBox(){
-//		JFrame pushbox = new JFrame();
-//		pushbox.setSize(500,500);
-//		pushbox.setVisible(true);
-//		JTable pushDatabase = new JTable();
-//		JScrollPane pushpane = new JScrollPane(pushDatabase);
-//		pushpane.setLocation(0,0);
-//		pushpane.setSize(400,400);
-//		pushpane.setBorder(BorderFactory.createTitledBorder("Push Box"));
-//		pushbox.add(pushpane);
-//		ResultSet resultSet = null;
-//		resultSet = getDBInfo("SELECT DISTINCT artist,album,title from music WHERE DATE_ENTERED >="+DateUtil.now()-+ 
-//AND DATE_ENTERED <'2009-03-27'+"\"");
-//		albumModel.removeAllElements();
-//		albumModel.addElement("All Albums");
-//		try {
-//			int i=0;
-//			while(resultSet.next()){
-//				albumModel.addElement(resultSet.getString("album"));
-//				i++;
-//			}
-//		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
-//		
-//	}
+	public void getPushBox(){
+		JFrame pushbox = new JFrame();
+		pushbox.setSize(500,500);
+		pushbox.setVisible(true);
+		JTable pushDatabase = new JTable();
+		JScrollPane pushpane = new JScrollPane(pushDatabase);
+		pushpane.setLocation(0,0);
+		pushpane.setSize(400,400);
+		pushpane.setBorder(BorderFactory.createTitledBorder("Push Box"));
+		pushbox.add(pushpane);
+		ResultSet resultSet = null;
+		resultSet = getDBInfo("SELECT DISTINCT artist,album,title from music WHERE DATE > NOW() - INTERVAL 14 DAYS");
+		
+		try {
+			System.out.println(resultSet.getString("Artist"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
