@@ -17,7 +17,6 @@ public class FlacPlayer{
 		int min = (int)time/60;
 		int sec = (int)time % 60;
 		System.out.println("Time: "+min+":"+sec);
-		p.getLyrics("The Arcade Fire", "Neon Bible");
 	}
 	//Constructor takes the name to save decoded track as in the form of a string ex:"track1.wav"
 	public FlacPlayer(String trackName){
@@ -65,10 +64,8 @@ public class FlacPlayer{
 							lyricURL.openStream()));
 			String inputLine;
 
-			while ((inputLine = in.readLine()) != null){
-				System.out.println(inputLine);
-			text = text + inputLine + "\n";
-				
+			while ((inputLine = in.readLine()) != null){		
+				text = text + inputLine + "\n";	
 			}
 			in.close();
 		}catch(Exception e){}

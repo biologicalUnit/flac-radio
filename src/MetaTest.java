@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -17,7 +18,7 @@ public class MetaTest {
 
 
 	public static void main(String[] args){
-		String path = "/Volumes/WD Passport 1/FlacFiles";
+		String path = "/Volumes/WD Passport/FlacFiles";
 		File dir = new File(path);
 		MetaTest meta = new MetaTest();
 		meta.scanDb(dir);
@@ -43,6 +44,10 @@ public class MetaTest {
 					try {
 						fi = new RandomAccessFile(dir.toString()+"/"+list[i],"r");
 						FlacTag tag = reader.read(fi);
+						DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+			            java.util.Date date = new java.util.Date();
+			            String currentDate = dateFormat.format(date);
+
 						output += tag.getFirstArtist()+" "+tag.getFirstTitle()+"\n";
 						Class.forName("com.mysql.jdbc.Driver").newInstance();
 						connect = DriverManager.getConnection("jdbc:mysql://localhost/music?"
@@ -52,7 +57,7 @@ public class MetaTest {
 						PreparedStatement statement1 = connect.prepareStatement(state1);
 						ResultSet result = statement1.executeQuery();
 						if(!result.first()){
-							String state = "INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+tag.getFirstAlbum()+"\", \""+dir.toString()+"/"+list[i].toString()+"\", \""+"*"+"\")";
+							String state = "INSERT INTO music VALUES (\""+tag.getFirstTitle()+"\", \""+tag.getFirstArtist()+"\", \""+tag.getFirstAlbum()+"\", \""+dir.toString()+"/"+list[i].toString()+"\", \""+currentDate+"\", \""+tag.getFirstGenre()+"\")";
 							state.replace("'", "\'");
 							PreparedStatement statement = connect.prepareStatement(state);
 							statement.execute();
@@ -61,7 +66,6 @@ public class MetaTest {
 						// TODO Auto-generated catch block
 						e.printStackTrace();}
 				}
-				System.out.println(output);
 			}
 		}
 	}
