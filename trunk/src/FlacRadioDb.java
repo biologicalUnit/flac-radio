@@ -30,7 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class FlacRadioDb extends JFrame implements KeyListener{
+public class FlacRadioDb extends JFrame{
 	private JList artistDatabase;
 	private JList albumDatabase;
 	private JList titleDatabase;
@@ -239,6 +239,68 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		pushBoxButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				getPushBox();
+			}
+		});
+		
+		this.addKeyListener(new KeyListener(){
+			public void keyTyped(KeyEvent e){
+				switch(e.getKeyCode()){
+				case KeyEvent.VK_F1:
+					System.out.println("F1");
+					gui1.play();
+					break;
+				case KeyEvent.VK_F2:
+					System.out.println("F2");
+					gui1.rewind();
+					break;
+				case KeyEvent.VK_F3:
+					System.out.println("F3");
+					gui1.ejectLoad();
+					break;
+				case KeyEvent.VK_F4:
+					System.out.println("F4");
+					break;
+				case KeyEvent.VK_F5:
+					System.out.println("F5");
+					gui2.play();
+					break;
+				case KeyEvent.VK_F6:
+					System.out.println("F6");
+					gui2.rewind();
+					break;
+				case KeyEvent.VK_F7:
+					System.out.println("F7");
+					gui2.ejectLoad();
+					break;
+				case KeyEvent.VK_F8:
+					System.out.println("F8");
+					break;
+				case KeyEvent.VK_F9:
+					System.out.println("F9");
+					gui3.play();
+					break;
+				case KeyEvent.VK_F10:
+					System.out.println("F10");
+					gui3.rewind();
+					break;
+				case KeyEvent.VK_F11:
+					System.out.println("F1");
+					gui3.ejectLoad();
+					break;
+				case KeyEvent.VK_F12:
+					System.out.println("F12");
+					break;
+				}
+			}
+
+			public void keyPressed(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 
@@ -555,65 +617,7 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 
 	}
 
-	public void keyTyped(KeyEvent e){
-		switch(e.getKeyCode()){
-		case KeyEvent.VK_F1:
-			System.out.println("F1");
-			gui1.play();
-			break;
-		case KeyEvent.VK_F2:
-			System.out.println("F2");
-			gui1.rewind();
-			break;
-		case KeyEvent.VK_F3:
-			System.out.println("F3");
-			gui1.ejectLoad();
-			break;
-		case KeyEvent.VK_F4:
-			System.out.println("F4");
-			break;
-		case KeyEvent.VK_F5:
-			System.out.println("F5");
-			gui2.play();
-			break;
-		case KeyEvent.VK_F6:
-			System.out.println("F6");
-			gui2.rewind();
-			break;
-		case KeyEvent.VK_F7:
-			System.out.println("F7");
-			gui2.ejectLoad();
-			break;
-		case KeyEvent.VK_F8:
-			System.out.println("F8");
-			break;
-		case KeyEvent.VK_F9:
-			System.out.println("F9");
-			gui3.play();
-			break;
-		case KeyEvent.VK_F10:
-			System.out.println("F10");
-			gui3.rewind();
-			break;
-		case KeyEvent.VK_F11:
-			System.out.println("F1");
-			gui3.ejectLoad();
-			break;
-		case KeyEvent.VK_F12:
-			System.out.println("F12");
-			break;
-		}
-	}
-
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 }
