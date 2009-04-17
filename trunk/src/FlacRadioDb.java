@@ -43,12 +43,12 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 	private JButton lyricsButton;
 	private JButton pushBoxButton;
 	private JTextField locationField;
-    private JTextField userNameField;
-    private JTextField passwordField;
-	
-	
+	private JTextField userNameField;
+	private JTextField passwordField;
+
+
 	private String mysqlPath, mysqlUser, mysqlPass;
-	
+
 	private JMenuBar menuBar;
 	private JMenuItem preference;
 	private JMenu file;
@@ -58,12 +58,12 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 	private DefaultListModel albumModel;
 	private DefaultTableModel searchModel;
 	private FlacRadioGUI gui1,gui2,gui3;
-	
+
 	private JPanel panel;
-	private Thread t1;
+	private Thread t1,t2,t3;
 
 	public FlacRadioDb(){
-		
+
 		mysqlPath = "localhost/music";
 		mysqlUser = "root";
 		mysqlPass = "";
@@ -85,29 +85,37 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		String[] comboBoxString = { "Artist", "Album", "Title"};
 		choices = new JComboBox(comboBoxString);
 		artistDatabase = new JList(artistModel);
-		getAllArtists();
 		albumDatabase = new JList(albumModel);
 		titleDatabase = new JList(titleModel);
 
 		titleDatabase.setDragEnabled(true);
 		searchDatabase.setDragEnabled(true);
-		 
-		
+
+
 		//Load Previous preferences from file (MySQL Path, USER, PASS)
 		FileInputStream fin;		
 		try
 		{
-		    fin = new FileInputStream ("preferences");
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
-		    mysqlPath = reader.readLine();
-		    System.out.println(mysqlPath);
-		    mysqlUser = reader.readLine();
-		    System.out.println(mysqlUser);
-		    mysqlPass = reader.readLine();
-		    System.out.println(mysqlPass);
-		    fin.close();		
-		}catch(Exception e){System.out.println("Oops No File");}
-		
+			fin = new FileInputStream ("preferences");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+			mysqlPath = reader.readLine();
+			System.out.println(mysqlPath);
+			mysqlUser = reader.readLine();
+			System.out.println(mysqlUser);
+			mysqlPass = reader.readLine();
+			System.out.println(mysqlPass);
+			fin.close();
+		}catch(Exception e){
+			mysqlPath = "143.105.16.195/wjcuflac_music";
+			mysqlUser = "wjcuflac";
+			mysqlPass = "flacradio";
+		}
+		try{
+			getAllArtists();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
 
 		artistDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		albumDatabase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -119,7 +127,7 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		JScrollPane albumScrollPane = new JScrollPane(albumDatabase);
 		JScrollPane titleScrollPane = new JScrollPane(titleDatabase);
 		JScrollPane searchScrollPane = new JScrollPane(searchDatabase);
-		
+
 		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
@@ -134,28 +142,28 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
 		titleScrollPane.setBackground(Color.decode("#B3FF81"));
-		
+
 		searchScrollPane.setLocation(330,430);
 		searchScrollPane.setSize(410,200);
 		searchScrollPane.setBorder(BorderFactory.createTitledBorder("Search Result"));
 		searchScrollPane.setBackground(Color.decode("#B3FF81"));
-		
+
 		searchBox.setLocation(330, 400);
 		searchBox.setSize(190,25);
-		
+
 		choices.setSelectedIndex(2);
 		choices.setLocation(530, 400);
 		choices.setSize(100,25);
-		
+
 		searchButton.setLocation(640,400);
 		searchButton.setSize(100,25);
-		
+
 		lyricsButton.setLocation(750,20);
 		lyricsButton.setSize(110,75);
-		
+
 		pushBoxButton.setLocation(750,120);
 		pushBoxButton.setSize(110,75);
-		
+
 		panel = new JPanel();
 		panel.setBackground(Color.decode("#B3FF81"));
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
@@ -187,8 +195,7 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 				setSelectedAlbum(getAlbum());
 			}
 		});
-		
-		
+
 		searchDatabase.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent e) {
@@ -197,22 +204,22 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 		});
@@ -221,27 +228,27 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 				search(searchBox.getText());
 			}
 		});
-		
+
 		lyricsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {	
 				getLyrics();
-				
+
 			}
 		});
-		
+
 		pushBoxButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				getPushBox();
 			}
 		});
-		
+
 		searchModel.addColumn("Title");
 		searchModel.addColumn("Artist");
 		searchModel.addColumn("Album");
-		
-		gui1 = new FlacRadioGUI(this);
-		gui2 = new FlacRadioGUI(this);
-		gui3 = new FlacRadioGUI(this);
+
+		gui1 = new FlacRadioGUI(this,1);
+		gui2 = new FlacRadioGUI(this,2);
+		gui3 = new FlacRadioGUI(this,3);
 		gui1.setSize(310,175);
 		gui2.setSize(310,175);
 		gui3.setSize(310,175);
@@ -251,7 +258,7 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		gui1.setVisible(true);
 		gui2.setVisible(true);
 		gui3.setVisible(true);
-		
+
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		file = new JMenu("File");
@@ -259,15 +266,15 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		preference = new JMenuItem("Preferences");
 		file.add(preference);
 		preference.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                setPreferences();
-            }
-        });
+			public void actionPerformed(ActionEvent arg0) {
+				setPreferences();
+			}
+		});
 		this.add(gui1);
 		this.add(gui2);
 		this.add(gui3);
-		this.addKeyListener(this);
-		
+
+
 		getContentPane().add(panel);
 		panel.add(artistScrollPane);
 		panel.add(titleScrollPane);
@@ -280,9 +287,9 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		panel.add(pushBoxButton);
 		panel.setLayout(null);
 		artistDatabase.setSelectedIndex(0);
-		
-		
-		
+
+
+
 		gui1.setEnabled(true);
 		gui1.setDropTarget(new DropTarget(gui1,gui1));
 		gui2.setEnabled(true);
@@ -290,13 +297,13 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		gui3.setEnabled(true);
 		gui3.setDropTarget(new DropTarget(gui3,gui3));
 	}
-	
+
 	public void getSelectedSearchArtistTitleAlbum(){
 		setSelectedArtist((String)this.searchModel.getValueAt(this.searchDatabase.getSelectedRow(), 1));
 		setSelectedTitle((String)this.searchModel.getValueAt(this.searchDatabase.getSelectedRow(), 0));
 		setSelectedAlbum((String)this.searchModel.getValueAt(this.searchDatabase.getSelectedRow(), 2));
 	}
-	
+
 	public String getArtist(){
 		if(artistDatabase.getSelectedIndex() >=0){
 			return artistDatabase.getSelectedValue().toString();
@@ -318,11 +325,13 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 	public void getAllArtists(){
 		ResultSet resultSet = null;
 		resultSet = getDBInfo("SELECT DISTINCT artist from music ORDER BY artist");
-		try {
-			while(resultSet.next()){
-				artistModel.addElement(resultSet.getString("artist"));
-			}
-		}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
+		if(resultSet != null){
+			try {
+				while(resultSet.next()){
+					artistModel.addElement(resultSet.getString("artist"));
+				}
+			}catch(SQLException ex){JOptionPane.showMessageDialog(this, "Database Error.");}
+		}
 
 	}
 	public void getAlbumsFromArtist(String artist){
@@ -377,18 +386,29 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		selectedTitle = title;
 	}
 	public String getSelectedTitle(){
-		
+
 		return selectedTitle;
 	}
 	public String getSelectedAlbum(){
 		return selectedAlbum;
 	}
 	public String getSelectedArtist(){
-		
+
 		return selectedArtist;
 	}
-	public void makeThread(Runnable run){
-		new Thread(run).start();
+	public void makeThread(int playerID,Runnable run){
+		if(playerID == 1){
+			t1 = new Thread(run);
+			t1.start();
+		}
+		if(playerID == 2){
+			t2 = new Thread(run);
+			t2.start();
+		}
+		if(playerID == 3){
+			t3 = new Thread(run);
+			t3.start();
+		}
 	}
 	public void search(String searchField){
 		ResultSet results=null;
@@ -412,97 +432,97 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 				album = results.getString("album");
 				searchModel.addRow(new String[]{title,artist,album});
 			}
-				
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	 public void getLyrics(){
-         JFrame lyrics = new JFrame();
-         lyrics.setSize(500,500);
-         lyrics.setVisible(true);
-         JTextArea text = new JTextArea();
-         JScrollPane scrollPane= new JScrollPane(text);
-         scrollPane.setSize(300,300);
-         scrollPane.setLocation(5,60);
-         text.setText("ARTIST: "+this.getSelectedArtist()+"\n"+this.getSelectedAlbum()+"\n"+this.getSelectedTitle()+"\n\n"+gui1.flacPlayer.getLyrics(getSelectedArtist(), getSelectedTitle()));
-         text.setEditable(false);
-         lyrics.add(scrollPane);
-         lyrics.setVisible(true);
-         
- }
-	 public void setPreferences(){
-		 JFrame prefs = new JFrame();
-         prefs.setSize(500,500);
-         prefs.setVisible(true);
-         
-         locationField = new JTextField();
-         userNameField = new JTextField();
-         passwordField = new JTextField();
-         JLabel locationLabel = new JLabel("Location to MySql Database: ");
-         JLabel userNameLabel = new JLabel("MySql Username: ");
-         JLabel passwordLabel = new JLabel("MySql Password: ");
-         JButton updateButton = new JButton("Update");
-         
-         locationField.setSize(150, 20);
-         userNameField.setSize(150, 20);
-         passwordField.setSize(150, 20);
-         updateButton.setSize(100, 75);
-         
-         locationLabel.setSize(250, 20);
-         userNameLabel.setSize(250, 20);
-         passwordLabel.setSize(250, 20);
-         
-         locationField.setLocation(300,20);
-         userNameField.setLocation(300,50);
-         passwordField.setLocation(300,80);
-         updateButton.setLocation(20, 120);
-         
-         locationLabel.setLocation(20,20);
-         userNameLabel.setLocation(20,50);
-         passwordLabel.setLocation(20,80);
-         
-         prefs.add(locationLabel);
-         prefs.add(userNameLabel);
-         prefs.add(passwordLabel);
-         
-         prefs.add(locationField);
-         prefs.add(userNameField);
-         prefs.add(passwordField);
-         prefs.add(updateButton);
-         prefs.setLayout(null);
-         prefs.setVisible(true);
- 		updateButton.addActionListener(new ActionListener() {
+	public void getLyrics(){
+		JFrame lyrics = new JFrame();
+		lyrics.setSize(500,500);
+		lyrics.setVisible(true);
+		JTextArea text = new JTextArea();
+		JScrollPane scrollPane= new JScrollPane(text);
+		scrollPane.setSize(300,300);
+		scrollPane.setLocation(5,60);
+		text.setText("ARTIST: "+this.getSelectedArtist()+"\n"+this.getSelectedAlbum()+"\n"+this.getSelectedTitle()+"\n\n"+gui1.flacPlayer.getLyrics(getSelectedArtist(), getSelectedTitle()));
+		text.setEditable(false);
+		lyrics.add(scrollPane);
+		lyrics.setVisible(true);
+
+	}
+	public void setPreferences(){
+		JFrame prefs = new JFrame();
+		prefs.setSize(500,500);
+		prefs.setVisible(true);
+
+		locationField = new JTextField();
+		userNameField = new JTextField();
+		passwordField = new JTextField();
+		JLabel locationLabel = new JLabel("Location to MySql Database: ");
+		JLabel userNameLabel = new JLabel("MySql Username: ");
+		JLabel passwordLabel = new JLabel("MySql Password: ");
+		JButton updateButton = new JButton("Update");
+
+		locationField.setSize(150, 20);
+		userNameField.setSize(150, 20);
+		passwordField.setSize(150, 20);
+		updateButton.setSize(100, 75);
+
+		locationLabel.setSize(250, 20);
+		userNameLabel.setSize(250, 20);
+		passwordLabel.setSize(250, 20);
+
+		locationField.setLocation(300,20);
+		userNameField.setLocation(300,50);
+		passwordField.setLocation(300,80);
+		updateButton.setLocation(20, 120);
+
+		locationLabel.setLocation(20,20);
+		userNameLabel.setLocation(20,50);
+		passwordLabel.setLocation(20,80);
+
+		prefs.add(locationLabel);
+		prefs.add(userNameLabel);
+		prefs.add(passwordLabel);
+
+		prefs.add(locationField);
+		prefs.add(userNameField);
+		prefs.add(passwordField);
+		prefs.add(updateButton);
+		prefs.setLayout(null);
+		prefs.setVisible(true);
+		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				updatePrefs();
 			}
 		});
-		 
 
-	 }
-	 public void updatePrefs(){
-		 FileOutputStream fout;
-			try
-			{
-				String path;
-				String user;
-				String pass;
-				path = locationField.getText();
-				user = userNameField.getText();
-				pass = passwordField.getText();
-			    fout = new FileOutputStream ("preferences");
-			    new PrintStream(fout).println (path);//path
-			    new PrintStream(fout).println (user);//user
-			    new PrintStream(fout).println (pass);//password
-			    fout.close();		
-			}
-			// Catches any error conditions
-			catch (IOException e)
-			{
-				System.err.println ("Unable to write to file");
-			}
-	 }
+
+	}
+	public void updatePrefs(){
+		FileOutputStream fout;
+		try
+		{
+			String path;
+			String user;
+			String pass;
+			path = locationField.getText();
+			user = userNameField.getText();
+			pass = passwordField.getText();
+			fout = new FileOutputStream ("preferences");
+			new PrintStream(fout).println (path);//path
+			new PrintStream(fout).println (user);//user
+			new PrintStream(fout).println (pass);//password
+			fout.close();		
+		}
+		// Catches any error conditions
+		catch (IOException e)
+		{
+			System.err.println ("Unable to write to file");
+		}
+	}
 
 	public void getPushBox(){
 		JFrame pushbox = new JFrame();
@@ -516,25 +536,25 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		pushbox.add(pushpane);
 		ResultSet resultSet = null;
 		resultSet = getDBInfo("SELECT DISTINCT artist,album,title from music WHERE DATE > NOW() - INTERVAL 14 DAYS");
-		
+
 		try {
 			System.out.println(resultSet.getString("Artist"));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
 		db.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		db.setVisible(true);
-		
-		
+
+
 
 	}
-	@Override
+
 	public void keyTyped(KeyEvent e){
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_F1:
@@ -585,17 +605,16 @@ public class FlacRadioDb extends JFrame implements KeyListener{
 		}
 	}
 
-	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }
 

@@ -33,9 +33,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	//private JTextArea lyrics;
 	private DropTarget dt;
 	private Font labelFont,textFont;
+	private int playerID;
 
-	public FlacRadioGUI(FlacRadioDb data){
-
+	public FlacRadioGUI(FlacRadioDb data, int id){
+		playerID = id;
 		db = data;
 		flacPlayer = new FlacPlayer(trackName);
 		labelFont = new Font("Serif", Font.BOLD, 18);
@@ -157,7 +158,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			artistText.setText("LOAD A TRACK");
 			titleText.setText("Click and Drag a Song Here");
 		}else{
-			db.makeThread(this);
+			db.makeThread(playerID,this);
 		}
 	}
 
