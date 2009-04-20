@@ -40,7 +40,7 @@ public class FlacPlayer{
 	//Stops the track, resets it to the beginning
 	public void rewind(){
 		player.stop();
-		player.setMediaTime(player.RESET);
+		player.setMediaTime(Player.RESET);
 	}
 
 	//returns the length of the track in the form of seconds

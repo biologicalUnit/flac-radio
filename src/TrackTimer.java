@@ -1,10 +1,4 @@
 import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 
 public class TrackTimer implements Runnable{
@@ -13,7 +7,6 @@ public class TrackTimer implements Runnable{
 	 * @param args
 	 */
 	private int minutes, seconds;
-	private JTextArea text;
 	private FlacRadioGUI flacGUI;
 	private boolean countDown;
 
@@ -27,9 +20,7 @@ public class TrackTimer implements Runnable{
 		}else if(seconds >= 10 && minutes >= 0){
 			flacGUI.setTimeText(minutes+":"+seconds);
 		}
-		
-		
-		
+				
 	}
 
 	public void run() {
