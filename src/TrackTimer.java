@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JFrame;
@@ -25,9 +26,9 @@ public class TrackTimer implements Runnable{
 			flacGUI.setTimeText(minutes+":0"+seconds);
 		}else if(seconds >= 10 && minutes >= 0){
 			flacGUI.setTimeText(minutes+":"+seconds);
-		}else if(seconds == 0 && minutes == 0){
-			flacGUI.setTimeText("Track Finished");// Replaced to reset player.. "Auto Eject?"
 		}
+		
+		
 		
 	}
 
@@ -38,6 +39,9 @@ public class TrackTimer implements Runnable{
 			}else if(seconds == 0 && minutes > 0){
 				seconds = 59;
 				minutes--;
+			}
+			if(seconds <= 10 && minutes == 0){
+				flacGUI.setBackground(Color.RED);
 			}
 			try {
 				if(seconds < 10){
