@@ -10,14 +10,7 @@ public class FlacPlayer{
 	private File track;
 	private Player player;
 
-	public static void main(String []args){
-		FlacPlayer p = new FlacPlayer("track.wav");
-		p.load("/Users/markryan/Documents/TestDb/Rebel.flac");
-		double time = p.getTime();
-		int min = (int)time/60;
-		int sec = (int)time % 60;
-		System.out.println("Time: "+min+":"+sec);
-	}
+
 	//Constructor takes the name to save decoded track as in the form of a string ex:"track1.wav"
 	public FlacPlayer(String trackName){
 		player = null;

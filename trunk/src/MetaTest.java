@@ -31,7 +31,6 @@ public class MetaTest {
 				scanDb(new File(dir, children[i]));
 			}
 
-
 			Connection connect = null;
 			String[] list = dir.list();
 			String output = "";
@@ -63,7 +62,6 @@ public class MetaTest {
 							statement.execute();
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();}
 				}
 			}

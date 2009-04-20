@@ -69,7 +69,7 @@ public class FlacRadioDb extends JFrame{
 		mysqlPass = "";
 
 		setSize(900,700);
-		this.setBackground(Color.decode("#B3FF81"));
+		this.setBackground(Color.decode("#84A8C1"));
 		selectedArtist = null;
 		selectedTitle = null;
 		selectedAlbum = null;
@@ -131,22 +131,22 @@ public class FlacRadioDb extends JFrame{
 		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
-		artistScrollPane.setBackground(Color.decode("#B3FF81"));
+		artistScrollPane.setBackground(Color.decode("#84A8C1"));
 
 		albumScrollPane.setLocation(537,0);
 		albumScrollPane.setSize(200,200);
 		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
-		albumScrollPane.setBackground(Color.decode("#B3FF81"));
+		albumScrollPane.setBackground(Color.decode("#84A8C1"));
 
 		titleScrollPane.setLocation(330,200);
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
-		titleScrollPane.setBackground(Color.decode("#B3FF81"));
+		titleScrollPane.setBackground(Color.decode("#84A8C1"));
 
 		searchScrollPane.setLocation(330,430);
 		searchScrollPane.setSize(410,200);
 		searchScrollPane.setBorder(BorderFactory.createTitledBorder("Search Result"));
-		searchScrollPane.setBackground(Color.decode("#B3FF81"));
+		searchScrollPane.setBackground(Color.decode("#84A8C1"));
 
 		searchBox.setLocation(330, 400);
 		searchBox.setSize(190,25);
@@ -165,7 +165,7 @@ public class FlacRadioDb extends JFrame{
 		pushBoxButton.setSize(110,75);
 
 		panel = new JPanel();
-		panel.setBackground(Color.decode("#B3FF81"));
+		panel.setBackground(Color.decode("#84A8C1"));
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(artistDatabase.getSelectedIndex()>=0){
@@ -242,67 +242,6 @@ public class FlacRadioDb extends JFrame{
 			}
 		});
 		
-		this.addKeyListener(new KeyListener(){
-			public void keyTyped(KeyEvent e){
-				switch(e.getKeyCode()){
-				case KeyEvent.VK_F1:
-					System.out.println("F1");
-					gui1.play();
-					break;
-				case KeyEvent.VK_F2:
-					System.out.println("F2");
-					gui1.rewind();
-					break;
-				case KeyEvent.VK_F3:
-					System.out.println("F3");
-					gui1.ejectLoad();
-					break;
-				case KeyEvent.VK_F4:
-					System.out.println("F4");
-					break;
-				case KeyEvent.VK_F5:
-					System.out.println("F5");
-					gui2.play();
-					break;
-				case KeyEvent.VK_F6:
-					System.out.println("F6");
-					gui2.rewind();
-					break;
-				case KeyEvent.VK_F7:
-					System.out.println("F7");
-					gui2.ejectLoad();
-					break;
-				case KeyEvent.VK_F8:
-					System.out.println("F8");
-					break;
-				case KeyEvent.VK_F9:
-					System.out.println("F9");
-					gui3.play();
-					break;
-				case KeyEvent.VK_F10:
-					System.out.println("F10");
-					gui3.rewind();
-					break;
-				case KeyEvent.VK_F11:
-					System.out.println("F1");
-					gui3.ejectLoad();
-					break;
-				case KeyEvent.VK_F12:
-					System.out.println("F12");
-					break;
-				}
-			}
-
-			public void keyPressed(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 
 		searchModel.addColumn("Title");
 		searchModel.addColumn("Artist");
@@ -311,12 +250,15 @@ public class FlacRadioDb extends JFrame{
 		gui1 = new FlacRadioGUI(this,1);
 		gui2 = new FlacRadioGUI(this,2);
 		gui3 = new FlacRadioGUI(this,3);
-		gui1.setSize(310,175);
-		gui2.setSize(310,175);
-		gui3.setSize(310,175);
+		gui1.setSize(315,175);
+		gui2.setSize(315,175);
+		gui3.setSize(315,175);
 		gui1.setLocation(0, 0);
 		gui2.setLocation(0,180);
 		gui3.setLocation(0,360);
+		gui1.setBorder(BorderFactory.createTitledBorder("Player 1"));
+		gui2.setBorder(BorderFactory.createTitledBorder("Player 2"));
+		gui3.setBorder(BorderFactory.createTitledBorder("Player 3"));
 		gui1.setVisible(true);
 		gui2.setVisible(true);
 		gui3.setVisible(true);
@@ -332,6 +274,7 @@ public class FlacRadioDb extends JFrame{
 				setPreferences();
 			}
 		});
+		
 		this.add(gui1);
 		this.add(gui2);
 		this.add(gui3);
@@ -612,12 +555,7 @@ public class FlacRadioDb extends JFrame{
 		FlacRadioDb db = new FlacRadioDb();
 		db.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		db.setVisible(true);
-
-
-
 	}
-
-	
 
 
 }

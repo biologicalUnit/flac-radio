@@ -6,6 +6,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
@@ -19,7 +21,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener{
-	private final String trackName = System.currentTimeMillis()+".wav";
 	public FlacPlayer flacPlayer;
 	private FlacRadioDb db;
 	private JButton playPause;
@@ -38,10 +39,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	public FlacRadioGUI(FlacRadioDb data, int id){
 		playerID = id;
 		db = data;
-		flacPlayer = new FlacPlayer(trackName);
+		flacPlayer = new FlacPlayer(id+".wav");
 		labelFont = new Font("Serif", Font.BOLD, 18);
 		textFont = new Font("Serif", Font.BOLD, 25);
-		
+
 		setVisible(true);
 
 		artistText = new JLabel("LOAD A TRACK");
@@ -99,7 +100,22 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 				ejectLoad();
 			}
 		});
-
+		this.setFocusable(true);
+		if(id == 1){
+			playPause.setMnemonic(KeyEvent.VK_1);
+			back.setMnemonic(KeyEvent.VK_2);
+			eject.setMnemonic(KeyEvent.VK_3);
+		}
+		if(id == 2){
+			playPause.setMnemonic(KeyEvent.VK_4);
+			back.setMnemonic(KeyEvent.VK_5);
+			eject.setMnemonic(KeyEvent.VK_6);
+		}
+		if(id == 3){
+			playPause.setMnemonic(KeyEvent.VK_7);
+			back.setMnemonic(KeyEvent.VK_8);
+			eject.setMnemonic(KeyEvent.VK_9);
+		}
 
 		this.add(artistText);
 		this.add(titleText);
@@ -111,7 +127,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		this.setVisible(true);
 		dt = new DropTarget();
 		this.setEnabled(true);
-		this.setBackground(Color.decode("#B3FF81"));
+		this.setBackground(Color.decode("#84A8C1"));
 
 
 	}
@@ -156,7 +172,9 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			back.setEnabled(false);
 			hasTrack = false;
 			artistText.setText("LOAD A TRACK");
-			titleText.setText("Click and Drag a Song Here");
+			titleText.setText("click and drag a song here");
+			timeText.setText("0:00");
+			this.setBackground(Color.decode("#84A8C1"));
 		}else{
 			db.makeThread(playerID,this);
 		}
@@ -180,6 +198,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 				back.setEnabled(true);
 				playPause.setEnabled(true);
 				eject.setEnabled(true);
+				this.setBackground(Color.decode("#84A8C1"));
 				double time = flacPlayer.getTime();
 				int min = (int)time/60;
 				int sec = (int)time % 60;
@@ -187,7 +206,9 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			}catch(Exception ex){JOptionPane.showMessageDialog(this, "Database Error.");}
 		}else{
 			artistText.setText("LOAD A TRACK");
-			titleText.setText("Click and Drag a Song Here");
+			titleText.setText("click and drag a song here");
+			timeText.setText("0:00");
+			
 		}
 
 
