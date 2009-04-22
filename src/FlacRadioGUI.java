@@ -25,6 +25,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	private boolean paused;
 	private boolean hasTrack;
 	private TrackTimer timer;
+	private String artist,album,title;
 	//private JTextArea lyrics;
 
 	private Font labelFont,textFont;
@@ -40,7 +41,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		setVisible(true);
 
 		artistText = new JLabel("LOAD A TRACK");
-		titleText = new JLabel("Click and Drag a song here");
+		titleText = new JLabel("click and drag a song here");
 		timeText = new JLabel("0:00");
 
 		playPause = new JButton("Play");
@@ -73,9 +74,6 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		timeText.setLocation(260,30);
 		timeText.setSize(50, 30);
 		timeText.setFont(textFont);
-
-		//	lyricsScrollPane.setLocation(10,200);
-		//	lyricsScrollPane.setSize(300,300);
 
 		playPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -130,6 +128,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			Thread thread = new Thread(timer);
 			timer.setCountDown(true);
 			thread.start();
+			db.logSong(artist,album,title);
 			paused = false;
 			playPause.setText("Pause");
 
@@ -174,8 +173,11 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	}
 
 	public void run(){
-		artistText.setText(db.getSelectedArtist());
-		titleText.setText(db.getSelectedTitle());
+		artist = db.getSelectedArtist();
+		album = db.getSelectedAlbum();
+		title = db.getSelectedTitle();
+		artistText.setText(artist);
+		titleText.setText(title);
 		ResultSet resultSet = null;
 		if(db.getSelectedArtist() != null && db.getSelectedTitle() != null && db.getSelectedAlbum() != null){
 

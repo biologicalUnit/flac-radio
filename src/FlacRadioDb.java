@@ -16,6 +16,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -237,7 +239,7 @@ public class FlacRadioDb extends JFrame{
 				getPushBox();
 			}
 		});
-		
+
 
 		searchModel.addColumn("Title");
 		searchModel.addColumn("Artist");
@@ -270,7 +272,7 @@ public class FlacRadioDb extends JFrame{
 				setPreferences();
 			}
 		});
-		
+
 		this.add(gui1);
 		this.add(gui2);
 		this.add(gui3);
@@ -545,6 +547,54 @@ public class FlacRadioDb extends JFrame{
 			e.printStackTrace();
 		}
 
+	}
+	public void logSong(String passArtist, String passAlbum, String passTitle){
+
+		String logArtist,logAlbum,logTitle,logLabel;
+		logArtist = passArtist;
+		logAlbum = passAlbum;
+		logTitle = passTitle;
+		logLabel = "N/A";
+		String DATE_FORMAT_NOW = "yyyy-MM-dd ";
+		String TIME_FORMAT_NOW = "HH:mm:ss";
+
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf1 = new SimpleDateFormat(DATE_FORMAT_NOW);
+		SimpleDateFormat sdf2 = new SimpleDateFormat(TIME_FORMAT_NOW);
+		String date = sdf1.format(cal.getTime());
+		String time = sdf2.format(cal.getTime());
+
+		String[] monthName = {"January", "February","March", "April", "May", "June", "July","August", "September", "October", "November","December"};
+
+		String month = monthName[cal.get(Calendar.MONTH)];
+
+		ResultSet resultSet = null;
+		resultSet = getDBInfo("SELECT label from music WHERE artist=\""+logArtist+"\" and album=\""+logAlbum+"\" and title=\""+logTitle+"\"");
+
+		try{
+			if(resultSet.next()){
+				while(resultSet.next()){
+					logLabel = resultSet.getString("label");
+				}
+			}
+		}catch(SQLException e){JOptionPane.showMessageDialog(this, "Cannot Find Label.");}
+		if(logLabel == null){
+			logLabel = "Not Found";
+		}
+
+		FileOutputStream fout;
+		try
+		{
+			String entry = "\""+date+"\",\""+time+"\",\"\""+",\""+logArtist+"\",\""+logTitle+"\",\""+logAlbum+"\",\""+logLabel+"\",\"\",\"\",\"\",\"\",\"-1\",\"\",\"\",\"\",\"\",\"\"";
+			fout = new FileOutputStream (month+".csv");
+			new PrintStream(fout).println (entry);
+			fout.close();		
+		}
+		// Catches any error conditions
+		catch (IOException e)
+		{
+			System.err.println ("Unable to write to file");
+		}
 	}
 
 	public static void main(String[] args) {
