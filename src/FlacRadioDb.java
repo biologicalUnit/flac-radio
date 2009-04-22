@@ -6,8 +6,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -572,23 +574,24 @@ public class FlacRadioDb extends JFrame{
 		resultSet = getDBInfo("SELECT label from music WHERE artist=\""+logArtist+"\" and album=\""+logAlbum+"\" and title=\""+logTitle+"\"");
 
 		try{
-			if(resultSet.next()){
+			
 				while(resultSet.next()){
 					logLabel = resultSet.getString("label");
 				}
-			}
+			
 		}catch(SQLException e){JOptionPane.showMessageDialog(this, "Cannot Find Label.");}
 		if(logLabel == null){
 			logLabel = "Not Found";
 		}
-
-		FileOutputStream fout;
+		 
 		try
 		{
-			String entry = "\""+date+"\",\""+time+"\",\"0\""+",\""+logArtist+"\",\""+logTitle+"\",\""+logAlbum+"\",\""+logLabel+"\",\"\",\"\",\"\",\"\",\"-1\",\"\",\"\",\"\",\"\",\"\"";
-			fout = new FileOutputStream (month+".csv");
-			new PrintStream(fout).println (entry);
-			fout.close();		
+			String entry = "\""+date+"\",\""+time+"\",\"\""+",\""+logArtist+"\",\""+logTitle+"\",\""+logAlbum+"\",\""+logLabel+"\",\"\",\"\",\"\",\"\",\"-1\",\"\",\"\",\"\",\"\",\"\"";
+			BufferedWriter bw = new BufferedWriter (new FileWriter (month+".csv", true));
+			bw.write (entry);  
+			bw.newLine();  
+			bw.flush();  
+			bw.close();		
 		}
 		// Catches any error conditions
 		catch (IOException e)
