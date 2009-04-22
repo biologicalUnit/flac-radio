@@ -585,7 +585,7 @@ public class FlacRadioDb extends JFrame{
 		FileOutputStream fout;
 		try
 		{
-			String entry = "\""+date+"\",\""+time+"\",\"\""+",\""+logArtist+"\",\""+logTitle+"\",\""+logAlbum+"\",\""+logLabel+"\",\"\",\"\",\"\",\"\",\"-1\",\"\",\"\",\"\",\"\",\"\"";
+			String entry = "\""+date+"\",\""+time+"\",\"0\""+",\""+logArtist+"\",\""+logTitle+"\",\""+logAlbum+"\",\""+logLabel+"\",\"\",\"\",\"\",\"\",\"-1\",\"\",\"\",\"\",\"\",\"\"";
 			fout = new FileOutputStream (month+".csv");
 			new PrintStream(fout).println (entry);
 			fout.close();		
