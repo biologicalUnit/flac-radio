@@ -35,6 +35,7 @@ public class FlacRadioDb extends JFrame{
 	private JList albumDatabase;
 	private JList titleDatabase;
 	private JTable searchDatabase;
+	private JTable pushDatabase;
 	private JTextField searchBox;
 	private JComboBox choices;
 	private String selectedArtist;
@@ -56,7 +57,7 @@ public class FlacRadioDb extends JFrame{
 	private DefaultListModel artistModel;
 	private DefaultListModel titleModel;
 	private DefaultListModel albumModel;
-	private DefaultTableModel searchModel;
+	private DefaultTableModel searchModel,pushModel;
 	private FlacRadioGUI gui1,gui2,gui3;
 
 	private JPanel panel;
@@ -76,12 +77,14 @@ public class FlacRadioDb extends JFrame{
 		artistModel = new DefaultListModel();
 		albumModel = new DefaultListModel();
 		titleModel = new DefaultListModel();
-		searchModel = new DefaultTableModel();
+		searchModel = new NonEditTableModel();
+		pushModel = new NonEditTableModel();
 		searchBox = new JTextField(20);
 		searchButton = new JButton("Search");
 		lyricsButton = new JButton("Info");
 		pushBoxButton = new JButton("Pushbox");
 		searchDatabase = new JTable(searchModel);
+		pushDatabase = new JTable(pushModel);
 		String[] comboBoxString = { "Artist", "Album", "Title"};
 		choices = new JComboBox(comboBoxString);
 		artistDatabase = new JList(artistModel);
@@ -90,6 +93,8 @@ public class FlacRadioDb extends JFrame{
 
 		titleDatabase.setDragEnabled(true);
 		searchDatabase.setDragEnabled(true);
+		searchDatabase.enableInputMethods(false);
+
 
 
 		//Load Previous preferences from file (MySQL Path, USER, PASS)
@@ -242,10 +247,13 @@ public class FlacRadioDb extends JFrame{
 			}
 		});
 
-
 		searchModel.addColumn("Title");
 		searchModel.addColumn("Artist");
 		searchModel.addColumn("Album");
+		
+		pushModel.addColumn("Title");
+		pushModel.addColumn("Artist");
+		pushModel.addColumn("Album");
 
 		gui1 = new FlacRadioGUI(this,1);
 		gui2 = new FlacRadioGUI(this,2);
@@ -531,25 +539,68 @@ public class FlacRadioDb extends JFrame{
 
 	public void getPushBox(){
 		JFrame pushbox = new JFrame();
-		pushbox.setSize(500,500);
+		pushbox.setSize(405,405);
 		pushbox.setVisible(true);
-		JTable pushDatabase = new JTable();
+		
+		pushDatabase.setDragEnabled(true);
 		JScrollPane pushpane = new JScrollPane(pushDatabase);
+		pushDatabase.addMouseListener(new MouseListener(){
+
+			public void mouseClicked(MouseEvent e) {
+				getPushboxArtistTitleAlbum();
+			}
+
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+		
+		
 		pushpane.setLocation(0,0);
 		pushpane.setSize(400,400);
 		pushpane.setBorder(BorderFactory.createTitledBorder("Push Box"));
 		pushbox.add(pushpane);
 		ResultSet resultSet = null;
-		resultSet = getDBInfo("SELECT DISTINCT artist,album,title from music WHERE DATE > NOW() - INTERVAL 14 DAYS");
-
+		resultSet = getDBInfo("SELECT DISTINCT artist,album,title from music WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY)");
+		
 		try {
-			System.out.println(resultSet.getString("Artist"));
+			String title, artist, album;
+			while(resultSet.next()){
+				title = resultSet.getString("title");
+				artist = resultSet.getString("artist");
+				album = resultSet.getString("album");
+				
+				pushModel.addRow(new String[]{title,artist,album});
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
+	public void getPushboxArtistTitleAlbum(){
+		setSelectedArtist((String)this.pushModel.getValueAt(pushDatabase.getSelectedRow(), 1));
+		setSelectedTitle((String)this.pushModel.getValueAt(pushDatabase.getSelectedRow(), 0));
+		setSelectedAlbum((String)this.pushModel.getValueAt(pushDatabase.getSelectedRow(), 2));
+	}
+	
 	public void logSong(String passArtist, String passAlbum, String passTitle){
 
 		String logArtist,logAlbum,logTitle,logLabel;
