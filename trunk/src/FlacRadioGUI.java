@@ -83,8 +83,6 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				rewind();
-				paused = true;
-				playPause.setText("Play");
 			}
 		});
 		eject.addActionListener(new ActionListener() {
@@ -146,7 +144,10 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		int min = (int)time/60;
 		int sec = (int)time % 60;
 		timer = new TrackTimer(this,min,sec);
+		this.setBackground(Color.decode("#84A8C1"));
 		flacPlayer.rewind();
+		paused = true;
+		playPause.setText("Play");
 	}
 	public void ejectLoad(){
 		if(hasTrack){
@@ -240,5 +241,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 
 	public void dropActionChanged(DropTargetDragEvent dtde) {
 		// TODO Auto-generated method
+	}
+	public void endTrack(){
+		
 	}
 }

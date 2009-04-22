@@ -34,6 +34,9 @@ public class TrackTimer implements Runnable{
 			if(seconds <= 10 && minutes == 0){
 				flacGUI.setBackground(Color.RED);
 			}
+			if(seconds == 0 && minutes == 0){
+				flacGUI.endTrack();
+			}
 			try {
 				if(seconds < 10){
 					flacGUI.setTimeText(minutes+":0"+seconds);
