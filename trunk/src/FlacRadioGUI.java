@@ -27,6 +27,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	private TrackTimer timer;
 	private String artist,album,title;
 	//private JTextArea lyrics;
+	private int playPauseCount;
 
 	private Font labelFont,textFont;
 	private int playerID;
@@ -37,6 +38,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		flacPlayer = new FlacPlayer(id+".wav");
 		labelFont = new Font("Serif", Font.BOLD, 18);
 		textFont = new Font("Serif", Font.BOLD, 25);
+		playPauseCount = 0;
 
 		setVisible(true);
 
@@ -123,12 +125,16 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	public void play(){
 		if(paused){
 			flacPlayer.play();
+
 			Thread thread = new Thread(timer);
 			timer.setCountDown(true);
 			thread.start();
-			db.logSong(artist,album,title);
 			paused = false;
 			playPause.setText("Pause");
+			if(playPauseCount == 0){
+				db.logSong(artist,album,title);
+			}
+			playPauseCount++;
 
 		}else{
 			flacPlayer.pause();
@@ -158,6 +164,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			timer.setCountDown(false);
 			timer.setMinutes(0);
 			timer.setSeconds(0);
+			playPauseCount = 0;
 			paused=true;
 			flacPlayer.pause();
 			playPause.setEnabled(false);
@@ -204,7 +211,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			artistText.setText("LOAD A TRACK");
 			titleText.setText("click and drag a song here");
 			timeText.setText("0:00");
-			
+
 		}
 
 
@@ -243,6 +250,6 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		// TODO Auto-generated method
 	}
 	public void endTrack(){
-		
+
 	}
 }

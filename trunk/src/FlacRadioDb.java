@@ -110,7 +110,7 @@ public class FlacRadioDb extends JFrame{
 			mysqlPass = reader.readLine();
 			System.out.println(mysqlPass);
 			fin.close();
-		}catch(Exception e){
+		}catch(Exception e){	//defualts
 			mysqlPath = "143.105.16.195/wjcuflac_music";
 			mysqlUser = "wjcuflac";
 			mysqlPass = "flacradio";
