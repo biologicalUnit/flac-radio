@@ -1,10 +1,7 @@
 
-import java.awt.Color;
-import java.awt.dnd.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.dnd.DropTarget;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -46,7 +43,9 @@ public class FlacRadioDb extends JFrame{
 	private JTextField locationField;
 	private JTextField userNameField;
 	private JTextField passwordField;
-
+	private ImageIcon lyricsIcon;
+	private ImageIcon pushboxIcon;
+	private ImageIcon searchIcon;
 
 	private String mysqlPath, mysqlUser, mysqlPass;
 
@@ -62,15 +61,17 @@ public class FlacRadioDb extends JFrame{
 
 	private JPanel panel;
 	private Thread t1,t2,t3;
+	//private ImageIcon logo = new ImageIcon("images/wjcuLogoBG.gif", "Background");
 
 	public FlacRadioDb(){
 
-		mysqlPath = "localhost/music";
-		mysqlUser = "root";
-		mysqlPass = "";
+		mysqlPath = "143.105.16.195/wjcuflac_music";
+		mysqlUser = "wjcuflac";
+		mysqlPass = "flacradio";
 
 		setSize(900,700);
-		this.setBackground(Color.decode("#84A8C1"));
+		this.setBackground(Color.decode("#5874FF"));
+		
 		selectedArtist = null;
 		selectedTitle = null;
 		selectedAlbum = null;
@@ -80,9 +81,12 @@ public class FlacRadioDb extends JFrame{
 		searchModel = new NonEditTableModel();
 		pushModel = new NonEditTableModel();
 		searchBox = new JTextField(20);
-		searchButton = new JButton("Search");
-		lyricsButton = new JButton("Info");
-		pushBoxButton = new JButton("Pushbox");
+		lyricsIcon = new ImageIcon("images/Lyrics.gif", "Button");
+		pushboxIcon = new ImageIcon("images/Pushbox.gif", "Button");
+		searchIcon = new ImageIcon("images/Search.gif", "Button");
+		searchButton = new JButton("", searchIcon);
+		lyricsButton = new JButton("", lyricsIcon);
+		pushBoxButton = new JButton("", pushboxIcon);
 		searchDatabase = new JTable(searchModel);
 		pushDatabase = new JTable(pushModel);
 		String[] comboBoxString = { "Artist", "Album", "Title"};
@@ -110,7 +114,7 @@ public class FlacRadioDb extends JFrame{
 			mysqlPass = reader.readLine();
 			System.out.println(mysqlPass);
 			fin.close();
-		}catch(Exception e){	//defualts
+		}catch(Exception e){	//defaults
 			mysqlPath = "143.105.16.195/wjcuflac_music";
 			mysqlUser = "wjcuflac";
 			mysqlPass = "flacradio";
@@ -136,22 +140,22 @@ public class FlacRadioDb extends JFrame{
 		artistScrollPane.setLocation(330,0);
 		artistScrollPane.setSize(200,200);
 		artistScrollPane.setBorder(BorderFactory.createTitledBorder("Artist"));
-		artistScrollPane.setBackground(Color.decode("#84A8C1"));
+		artistScrollPane.setBackground(Color.decode("#5874FF"));
 
 		albumScrollPane.setLocation(537,0);
 		albumScrollPane.setSize(200,200);
 		albumScrollPane.setBorder(BorderFactory.createTitledBorder("Album"));
-		albumScrollPane.setBackground(Color.decode("#84A8C1"));
+		albumScrollPane.setBackground(Color.decode("#5874FF"));
 
 		titleScrollPane.setLocation(330,200);
 		titleScrollPane.setSize(410,200);
 		titleScrollPane.setBorder(BorderFactory.createTitledBorder("Title"));
-		titleScrollPane.setBackground(Color.decode("#84A8C1"));
+		titleScrollPane.setBackground(Color.decode("#5874FF"));
 
 		searchScrollPane.setLocation(330,430);
 		searchScrollPane.setSize(410,200);
 		searchScrollPane.setBorder(BorderFactory.createTitledBorder("Search Result"));
-		searchScrollPane.setBackground(Color.decode("#84A8C1"));
+		searchScrollPane.setBackground(Color.decode("#5874FF"));
 
 		searchBox.setLocation(330, 400);
 		searchBox.setSize(190,25);
@@ -170,7 +174,7 @@ public class FlacRadioDb extends JFrame{
 		pushBoxButton.setSize(110,75);
 
 		panel = new JPanel();
-		panel.setBackground(Color.decode("#84A8C1"));
+		panel.setBackground(Color.decode("#5874FF"));
 		artistDatabase.addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent arg0) {
 				if(artistDatabase.getSelectedIndex()>=0){
@@ -650,6 +654,10 @@ public class FlacRadioDb extends JFrame{
 			System.err.println ("Unable to write to file");
 		}
 	}
+	
+//	public void paintComponent(Graphics g){
+//		g.drawImage(logo.getImage(), 400, 200, this);
+//	}
 
 	public static void main(String[] args) {
 		FlacRadioDb db = new FlacRadioDb();
