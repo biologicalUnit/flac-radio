@@ -26,6 +26,15 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	private boolean hasTrack;
 	private TrackTimer timer;
 	private String artist,album,title;
+	private ImageIcon playButtonIcon;
+	private ImageIcon playDisabledIcon;
+	private ImageIcon pauseIcon;
+	private ImageIcon backIcon;
+	private ImageIcon backDisabledIcon;
+	private ImageIcon ejectIcon;
+	private ImageIcon ejectDisabledIcon;
+	private ImageIcon noteIcon;
+	//private String buttonSource;
 	//private JTextArea lyrics;
 	private int playPauseCount;
 
@@ -39,18 +48,25 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		labelFont = new Font("Serif", Font.BOLD, 18);
 		textFont = new Font("Serif", Font.BOLD, 25);
 		playPauseCount = 0;
-
-		setVisible(true);
+		//buttonSource = "images/Play.gif";
+		playButtonIcon = new ImageIcon("images/Play.gif", "Button");
+		playDisabledIcon = new ImageIcon("images/PlayDisabled.gif", "Button");
+		pauseIcon = new ImageIcon("images/Pause.gif", "Button");
+		backIcon = new ImageIcon("images/Back.gif", "Button");
+		backDisabledIcon = new ImageIcon("images/BackDisabled.gif", "Button");
+		ejectIcon = new ImageIcon("images/Eject.gif", "Button");
+		ejectDisabledIcon = new ImageIcon("images/EjectDisabled.gif", "Button");
+		noteIcon = new ImageIcon("images/Note.gif", "BG");
 
 		artistText = new JLabel("LOAD A TRACK");
 		titleText = new JLabel("click and drag a song here");
 		timeText = new JLabel("0:00");
 
-		playPause = new JButton("Play");
+		playPause = new JButton("", playButtonIcon);
 		paused=true;
 		hasTrack=false;
-		back = new JButton("|<-");
-		eject = new JButton("Eject");
+		back = new JButton("", backIcon);
+		eject = new JButton("", ejectIcon);
 		playPause.setEnabled(false);
 		back.setEnabled(false);
 		eject.setEnabled(false);
@@ -60,12 +76,15 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		playPause.setSize(95,50);
 		playPause.setLocation(10,115);
 		playPause.setFont(labelFont);
+		playPause.setDisabledIcon(playDisabledIcon);
 		back.setSize(95,50);
 		back.setLocation(113,115);
 		back.setFont(labelFont);
+		back.setDisabledIcon(backDisabledIcon);
 		eject.setSize(95,50);
 		eject.setLocation(215,115);
 		eject.setFont(labelFont);
+		eject.setDisabledIcon(ejectDisabledIcon);
 
 		artistText.setLocation(10, 30);
 		artistText.setSize(250,20);
@@ -118,7 +137,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		this.setLayout(null);
 		this.setVisible(true);
 		this.setEnabled(true);
-		this.setBackground(Color.decode("#84A8C1"));
+		this.setBackground(Color.decode("#5874FF"));
 
 
 	}
@@ -130,7 +149,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			timer.setCountDown(true);
 			thread.start();
 			paused = false;
-			playPause.setText("Pause");
+			playPause.setIcon(pauseIcon);
+			//playPause.setText("Pause");
 			if(playPauseCount == 0){
 				db.logSong(artist,album,title);
 			}
@@ -140,7 +160,8 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			flacPlayer.pause();
 			timer.setCountDown(false);
 			paused = true;
-			playPause.setText("Play");
+			playPause.setIcon(playButtonIcon);
+			//playPause.setText("Play");
 		}
 	}
 
@@ -150,16 +171,16 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 		int min = (int)time/60;
 		int sec = (int)time % 60;
 		timer = new TrackTimer(this,min,sec);
-		this.setBackground(Color.decode("#84A8C1"));
+		this.setBackground(Color.decode("#5874FF"));
 		flacPlayer.rewind();
 		paused = true;
-		playPause.setText("Play");
+		//playPause.setText("Play");
 	}
 	public void ejectLoad(){
 		if(hasTrack){
 			if(!paused){
 				flacPlayer.pause();
-				playPause.setText("Play");
+				//playPause.setText("Play");
 			}
 			timer.setCountDown(false);
 			timer.setMinutes(0);
@@ -174,7 +195,7 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 			artistText.setText("LOAD A TRACK");
 			titleText.setText("click and drag a song here");
 			timeText.setText("0:00");
-			this.setBackground(Color.decode("#84A8C1"));
+			this.setBackground(Color.decode("#5874FF"));
 		}else{
 			db.makeThread(playerID,this);
 		}
@@ -252,4 +273,9 @@ public class FlacRadioGUI extends JPanel implements Runnable, DropTargetListener
 	public void endTrack(){
 
 	}
+	
+	public void paintComponent(Graphics g){
+		g.drawImage(noteIcon.getImage(), 80, 10, this);
+	}
+	
 }
