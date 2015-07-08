@@ -1,0 +1,1 @@
+The project goal is to create a radio station quality program using Java for playing Flac files from networked drives tied into a MySQL Db. The player features two decks and search capabilities. Songs are logged into a text file.
